@@ -29,7 +29,7 @@ After that, you should have the latest version of that branch on your computer. 
 
 To ensure you're able to run the Net Blocks provided in the net folders, you might check the execution of ```test.ps1``` script. To run it, just open a Powershell instance on the project folder (could be a terminal on the vscode instance of the previous step) and type:
 ```ps1
-.\scripts.\test.ps1
+.\scripts\test.ps1
 ```
 
 If it hit some error it could be related with the previligies of PS to ecxecute PS1 files manually. In that case, please read the output error and try to fix it and try again (you can contact me @buronsuave if you have problems on this one). 
