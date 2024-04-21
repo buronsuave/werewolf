@@ -5,21 +5,25 @@ Please, read the ```Quick Start``` section to be able to contribute to this proj
 ## Quick Start
 ### 1. Clone this repository on your computer. 
 
-To do so, just click in the code button at the right-top corner of the repo, just below the watch counter. Copy to your clipboard using the icon. 
+To do so, just click in the code button at the right-top corner of the repo, just below the watch counter. Copy to your clipboard the HTTPS url using the icon. 
 
-![Clone Button](http://url/to/img.png)
+![Clone Button](img/qs_01.png)
 
-On your VSCode with a new empty folder open, select the option of Source Control (it looks like branches on the left) and hit the option ```Initalize Repository```. If git is well configured on your machine, the icon should dissapear.
+On your VSCode with a new empty folder open, select the option of Source Control (it looks like branches on the left) and hit the option ```Initialize Repository```. If git is well configured on your machine, the icon should disappear.
 
-![Init Repository](http://url/to/img.png)
+![Init Repository](img/qs_02.png)
 
 Then, click the three dots in the corner and hit the option ```Remote -> Add Remote```. It will ask you for the url, here's where you paste the one you copied to your clipboard before. Then will ask you for a name. It doesn't really matter, you can just type something standard as ```origin``` and it would do the job. 
 
-![Add remote](http://url/to/img.png)
+![Add remote](img/qs_03.png)
 
-In the bottom left corner of your vscode select the branch ```main``` and it should automatically start with the pulling of files from github. After that, you should have the latest version of that branch on your computer. (Check this in the files for that folder).
+In the bottom left corner of your vscode select the branch ```main```. Click on it and select in the box ```<remote>/main``` (in this case, ```origin/main```) and it should automatically start with the pulling of files from GitHub.
 
-![Pull files](http://url/to/img.png)
+![Pull files](img/qs_04.png)
+
+After that, you should have the latest version of that branch on your computer. (Check this in the files for that folder).
+
+![Pull files](img/qs_05.png)
 
 ### 2. Run the test.ps1 script
 
