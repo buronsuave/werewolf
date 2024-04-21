@@ -1,12 +1,3 @@
-// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-// ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-// PARTICULAR PURPOSE.
-//
-// Copyright (C) 2002  Microsoft Corporation.  All Rights Reserved.
-//
-// Module Name: SockInfo.cpp
-//
 // Description:
 //             This file contains the functions for allocating and freeing
 // the SOCK_INFO structures and for adding and deleting these structures from
