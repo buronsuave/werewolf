@@ -1,1 +1,1 @@
-Current logs pulled on console will be published here for debug
+We will send here the [CLIENT LOG] and [SERVER LOG] strings

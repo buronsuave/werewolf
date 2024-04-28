@@ -25,16 +25,18 @@ After that, you should have the latest version of that branch on your computer. 
 
 ![Pull files](img/qs_05.png)
 
-### 2. Run the test.ps1 script
+### 2. Run the build_run.ps1 script
 
-To ensure you're able to run the Net Blocks provided in the net folders, you might check the execution of ```test.ps1``` script. To run it, just open a Powershell instance on the project folder (could be a terminal on the vscode instance of the previous step) and type:
+To ensure you're able to run the Net Blocks provided in the net folders, you might check the execution of ```build_run.ps1``` script. To run it, just open a Powershell instance on the project folder (could be a terminal on the vscode instance of the previous step) and type:
 ```ps1
-.\scripts\test.ps1
+.\scripts\build_run.ps1
 ```
 
 If it hit some error it could be related with the previligies of PS to ecxecute PS1 files manually. In that case, please read the output error and try to fix it and try again (you can contact me @buronsuave if you have problems on this one). 
 
-If the script goes well, it should compile both client and server and put the exc files in a new folder call ```/.build``` in the same project directory. Then, it will attempt to execute them creating an instance of the server on ```NonBlockingAccept``` mode and three client instances to send a message and then finish their executions (this is, you sould see four command lines prompting to your screen. Please don't be scare, I sware is expected behavior). If you can type a message on each client and send them to the server, you should see through the server logs the message you sent (specifically on a sentence that looks like ```Received message: <your_message>```).
+If the script goes well, it should compile both client and server and put the exc files in a new folder call ```.build``` in the same project directory. Then, it will attempt to execute them creating an instance of the server and three client instances. The first client instance will be set as the **main host**, and it has the ability to change the stage of the game to an init status. You should see a similar output that the image once you hit the enter key in the main host terminal.
+
+![Running test script](img/qs_06.jpeg)
 
 If this is the behavior you're seeing, you're done and ready to start contribuiting to this precious code. 
 
