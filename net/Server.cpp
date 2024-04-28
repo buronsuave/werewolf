@@ -52,10 +52,10 @@ SOCKET Server::get_listener_socket(void)
     hints.ai_flags = AI_PASSIVE;
 
     // Resolve the server address and port
-    int iResult = getaddrinfo(NULL, PORT, &hints, &result);
-    if (iResult != 0)
+    int i_result = getaddrinfo(NULL, PORT, &hints, &result);
+    if (i_result != 0)
     {
-        printf(GRAY "[SERVER LOG] getaddrinfo failed: %d" RESET "\n", iResult);
+        printf(GRAY "[SERVER LOG] getaddrinfo failed: %d" RESET "\n", i_result);
         WSACleanup();
         exit(1);
     }
@@ -71,8 +71,8 @@ SOCKET Server::get_listener_socket(void)
     }
 
     // Setup the TCP listening socket
-    iResult = bind(listener, result->ai_addr, (int)result->ai_addrlen);
-    if (iResult == SOCKET_ERROR)
+    i_result = bind(listener, result->ai_addr, (int)result->ai_addrlen);
+    if (i_result == SOCKET_ERROR)
     {
         printf(GRAY "[SERVER LOG] bind failed: %d" RESET "\n", WSAGetLastError());
         freeaddrinfo(result);
@@ -83,8 +83,8 @@ SOCKET Server::get_listener_socket(void)
 
     freeaddrinfo(result);
 
-    iResult = listen(listener, SOMAXCONN);
-    if (iResult == SOCKET_ERROR)
+    i_result = listen(listener, SOMAXCONN);
+    if (i_result == SOCKET_ERROR)
     {
         printf(GRAY "[SERVER LOG] listen failed: %d" RESET "\n", WSAGetLastError());
         closesocket(listener);
@@ -99,7 +99,6 @@ int Server::main(void)
 {
     WSADATA wsaData;
     SOCKET listener = INVALID_SOCKET;
-    SOCKET clients[MAX_CLIENTS];
     fd_set master;
     fd_set read_fds;
     int fdmax;
@@ -152,13 +151,16 @@ int Server::main(void)
                         {
                             fdmax = newfd;
                         }
-                        printf(GRAY "[SERVER LOG] New connection from %s on socket %d" RESET "\n", inet_ntoa(((struct sockaddr_in *)&remoteaddr)->sin_addr), newfd);
+                        printf(
+                            GRAY "[SERVER LOG] New connection from %s on socket %d" RESET "\n", 
+                            inet_ntoa(((struct sockaddr_in *)&remoteaddr)->sin_addr), 
+                            newfd);
                     }
                 }
                 else
                 {
                     // Handle data from a client
-                    char buf[256];
+                    char buf[DEFAULT_BUFLEN];
                     int nbytes = recv(i, buf, sizeof(buf), 0);
                     if (nbytes <= 0)
                     {

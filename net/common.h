@@ -20,13 +20,4 @@
 #define GRAY "\033[90m"
 #define RESET "\033[0m"
 
-enum STAGE
-{
-    STAGE_LOBBY = 0,
-    STAGE_DAY = 1,
-    STAGE_NIGHT = 2,
-    STAGE_OVER = 3,
-    STAGE_NEW = 4
-};
-
 #endif
