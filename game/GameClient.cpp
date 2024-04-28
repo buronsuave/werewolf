@@ -6,14 +6,15 @@ void GameClient::handle_recv(char buf[], SOCKET s)
     {
         case STAGE_LOBBY:
         {
-            if (strstr(buf, "mainhost"))
+            if (strstr(buf, GAME_EVENT_MAINHOST))
             {
                 printf("You're the main host\n");
                 printf("You have the power to start the play!\n");
                 system("pause");
 
-                char response[100] = "init";
-                send_message(s, response, 101);
+                char response[DEFAULT_BUFLEN];
+                strcpy(response, GAME_EVENT_INIT);
+                send_message(s, response, DEFAULT_BUFLEN);
                 return;
             }
             else if (strstr(buf, "lobby"))
@@ -21,7 +22,7 @@ void GameClient::handle_recv(char buf[], SOCKET s)
                 printf("You've just jumped to the lobby.\nWaiting for main host to start.\n");
                 return;
             }
-            else if (strstr(buf, "start"))
+            else if (strstr(buf, GAME_EVENT_START))
             {
                 printf("Main host started the play!\n");
                 printf(GRAY "[CLIENT LOG] Changing state to NIGHT\n" RESET);

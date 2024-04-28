@@ -13,23 +13,12 @@ int Client::send_message(SOCKET s, char message[], int nbytes)
     }
 }
 
-int Client::main(void)
+SOCKET Client::get_connect_socket(void)
 {
-    WSADATA wsaData;
-    SOCKET ConnectSocket = INVALID_SOCKET;
-    struct addrinfo *result = NULL, *ptr = NULL, hints;
-    char recvbuf[DEFAULT_BUFLEN];
-    int recvbuflen = DEFAULT_BUFLEN;
-
-    int iResult;
-
-    // Initialize Winsock
-    iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
-    if (iResult != 0)
-    {
-        printf(GRAY "[CLIENT LOG] WSAStartup failed: %d\n" RESET, iResult);
-        return 1;
-    }
+    SOCKET connect_socket = INVALID_SOCKET; // Connect socket descriptior
+    struct addrinfo *result = NULL;
+    struct addrinfo *ptr = NULL; 
+    struct addrinfo hints;
 
     ZeroMemory(&hints, sizeof(hints));
     hints.ai_family = AF_UNSPEC;
@@ -37,7 +26,7 @@ int Client::main(void)
     hints.ai_protocol = IPPROTO_TCP;
 
     // Resolve the server address and port
-    iResult = getaddrinfo(SERVER_IP, PORT, &hints, &result);
+    int iResult = getaddrinfo(SERVER_IP, PORT, &hints, &result);
     if (iResult != 0)
     {
         printf(GRAY "[CLIENT LOG] getaddrinfo failed: %d\n" RESET, iResult);
@@ -49,8 +38,8 @@ int Client::main(void)
     for (ptr = result; ptr != NULL; ptr = ptr->ai_next)
     {
         // Create a SOCKET for connecting to server
-        ConnectSocket = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
-        if (ConnectSocket == INVALID_SOCKET)
+        connect_socket = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
+        if (connect_socket == INVALID_SOCKET)
         {
             printf(GRAY "[CLIENT LOG] socket failed: %d\n" RESET, WSAGetLastError());
             WSACleanup();
@@ -58,11 +47,11 @@ int Client::main(void)
         }
 
         // Connect to server
-        iResult = connect(ConnectSocket, ptr->ai_addr, (int)ptr->ai_addrlen);
+        iResult = connect(connect_socket, ptr->ai_addr, (int)ptr->ai_addrlen);
         if (iResult == SOCKET_ERROR)
         {
-            closesocket(ConnectSocket);
-            ConnectSocket = INVALID_SOCKET;
+            closesocket(connect_socket);
+            connect_socket = INVALID_SOCKET;
             continue;
         }
         break;
@@ -70,7 +59,27 @@ int Client::main(void)
 
     freeaddrinfo(result);
 
-    if (ConnectSocket == INVALID_SOCKET)
+    return connect_socket;
+}
+
+int Client::main(void)
+{
+    WSADATA wsa_data;
+    SOCKET connect_socket = INVALID_SOCKET;
+    struct addrinfo *result = NULL, *ptr = NULL, hints;
+    char recvbuf[DEFAULT_BUFLEN];
+    int recvbuflen = DEFAULT_BUFLEN;
+
+    // Initialize Winsock
+    int i_result = WSAStartup(MAKEWORD(2, 2), &wsa_data);
+    if (i_result != 0)
+    {
+        printf(GRAY "[CLIENT LOG] WSAStartup failed: %d\n" RESET, i_result);
+        return 1;
+    }
+
+    connect_socket = get_connect_socket();
+    if (connect_socket == INVALID_SOCKET)
     {
         printf(GRAY "[CLIENT LOG] Unable to connect to server!\n" RESET);
         WSACleanup();
@@ -79,11 +88,11 @@ int Client::main(void)
 
     // Ask for join
     const char *sendbuf = "join";
-    iResult = send(ConnectSocket, sendbuf, (int)strlen(sendbuf), 0);
-    if (iResult == SOCKET_ERROR)
+    i_result = send(connect_socket, sendbuf, (int)strlen(sendbuf), 0);
+    if (i_result == SOCKET_ERROR)
     {
         printf(GRAY "[CLIENT LOG] send failed: %d\n" RESET, WSAGetLastError());
-        closesocket(ConnectSocket);
+        closesocket(connect_socket);
         WSACleanup();
         return 1;
     }
@@ -91,30 +100,30 @@ int Client::main(void)
     // Main execution of the client
     for (;;)
     {
-        iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
-        if (iResult > 0)
+        i_result = recv(connect_socket, recvbuf, recvbuflen, 0);
+        if (i_result > 0)
         {
-            printf(GRAY "[CLIENT LOG] Bytes received: %d\n" RESET, iResult);
+            printf(GRAY "[CLIENT LOG] Bytes received: %d\n" RESET, i_result);
             printf(GRAY "[CLIENT LOG] Received: %s\n" RESET, recvbuf);
 
             // Handle received message
-            handle_recv(recvbuf, ConnectSocket);
+            handle_recv(recvbuf, connect_socket);
         }
-        else if (iResult == 0)
+        else if (i_result == 0)
         {
             printf(GRAY "[CLIENT LOG] Connection closed\n" RESET);
         }
         else
         {
             printf(GRAY "[CLIENT LOG] recv failed: %d\n" RESET, WSAGetLastError());
-            closesocket(ConnectSocket);
+            closesocket(connect_socket);
             WSACleanup();
             return 1;
         }
     }
 
     // Cleanup
-    closesocket(ConnectSocket);
+    closesocket(connect_socket);
     WSACleanup();
     return 0;
 }
