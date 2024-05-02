@@ -17,7 +17,7 @@ void GameClient::handle_recv(char buf[], SOCKET s)
                 send_message(s, response, DEFAULT_BUFLEN);
                 return;
             }
-            else if (strstr(buf, "lobby"))
+            else if (strstr(buf, GAME_EVENT_LOBBY))
             {
                 printf("You've just jumped to the lobby.\nWaiting for main host to start.\n");
                 return;
