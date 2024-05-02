@@ -35,7 +35,7 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
             }
             else if (strstr(buf, GAME_EVENT_INIT)) // Needs to implement the check of current number of players
             {
-                char response[100] = GAME_EVENT_START;
+                char response[DEFAULT_BUFLEN] = GAME_EVENT_START;
                 printf(GRAY "[SERVER LOG] Init request detected" RESET "\n");
 
                 // Create and send roles. Starting game with night
