@@ -15,23 +15,3 @@ class Client
 };
 
 #endif
-
-
-/*
-class Shape
-{
-    virtual int computeArea() = 0;
-};
-
-class Triangle : public Shape
-{
-    int computeArea() { return b*h/2; }
-}
-
-class Circle : public Shape
-{
-    int computeArea() { return Pi*r^2; }
-}
-
-
-*/
