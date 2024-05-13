@@ -2,6 +2,14 @@
 Write-Host "Creating .build folder" -ForegroundColor Yellow;
 New-Item -ItemType Directory -Force -Path .build
 
+# Create .build/logs folder
+Write-Host "Creating .build/logs folder" -ForegroundColor Yellow;
+New-Item -ItemType Directory -Force -Path .build/logs
+
+# Create logs folder
+Write-Host "Creating /logs folder" -ForegroundColor Yellow;
+New-Item -ItemType Directory -Force -Path logs
+
 # Compile client
 Write-Host "Compiling client_app.cpp file" -ForegroundColor Yellow;
 g++ -o .build/client_app.exe app/client_app.cpp game/*.cpp net/*.cpp -lws2_32

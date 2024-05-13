@@ -13,10 +13,10 @@ int Server::send_message(int i, char message[], SOCKET listener, fd_set master, 
 {
     if (FD_ISSET(i, &master) && i != listener)
     {
-        printf(GRAY "[SERVER LOG] Current value of i: %d" RESET "\n", i);
+        write_formatted_log(GRAY "[SERVER LOG] Current value of i: %d" RESET "\n", i);
         if (send(i, message, nbytes, 0) == SOCKET_ERROR)
         {
-            printf(GRAY "[SERVER LOG] send failed: %d" RESET "\n", WSAGetLastError());
+            write_formatted_log(GRAY "[SERVER LOG] send failed: %d" RESET "\n", WSAGetLastError());
             return 1;
         }
         else
@@ -55,7 +55,7 @@ SOCKET Server::get_listener_socket(void)
     int i_result = getaddrinfo(NULL, PORT, &hints, &result);
     if (i_result != 0)
     {
-        printf(GRAY "[SERVER LOG] getaddrinfo failed: %d" RESET "\n", i_result);
+        write_formatted_log(GRAY "[SERVER LOG] getaddrinfo failed: %d" RESET "\n", i_result);
         WSACleanup();
         exit(1);
     }
@@ -64,7 +64,7 @@ SOCKET Server::get_listener_socket(void)
     listener = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
     if (listener == INVALID_SOCKET)
     {
-        printf(GRAY "[SERVER LOG] Error at socket(): %ld" RESET "\n", WSAGetLastError());
+        write_formatted_log(GRAY "[SERVER LOG] Error at socket(): %ld" RESET "\n", WSAGetLastError());
         freeaddrinfo(result);
         WSACleanup();
         exit(1);
@@ -74,7 +74,7 @@ SOCKET Server::get_listener_socket(void)
     i_result = bind(listener, result->ai_addr, (int)result->ai_addrlen);
     if (i_result == SOCKET_ERROR)
     {
-        printf(GRAY "[SERVER LOG] bind failed: %d" RESET "\n", WSAGetLastError());
+        write_formatted_log(GRAY "[SERVER LOG] bind failed: %d" RESET "\n", WSAGetLastError());
         freeaddrinfo(result);
         closesocket(listener);
         WSACleanup();
@@ -86,7 +86,7 @@ SOCKET Server::get_listener_socket(void)
     i_result = listen(listener, SOMAXCONN);
     if (i_result == SOCKET_ERROR)
     {
-        printf(GRAY "[SERVER LOG] listen failed: %d" RESET "\n", WSAGetLastError());
+        write_formatted_log(GRAY "[SERVER LOG] listen failed: %d" RESET "\n", WSAGetLastError());
         closesocket(listener);
         WSACleanup();
         exit(1);
@@ -111,7 +111,7 @@ int Server::main(void)
     int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
     if (iResult != 0)
     {
-        printf(GRAY "[SERVER LOG] WSAStartup failed: %d" RESET "\n", iResult);
+        write_formatted_log(GRAY "[SERVER LOG] WSAStartup failed: %d" RESET "\n", iResult);
         return 1;
     }
 
@@ -126,7 +126,7 @@ int Server::main(void)
         rv = select(0, &read_fds, NULL, NULL, NULL);
         if (rv == SOCKET_ERROR)
         {
-            printf(GRAY "[SERVER LOG] select failed: %d" RESET "\n", WSAGetLastError());
+            write_formatted_log(GRAY "[SERVER LOG] select failed: %d" RESET "\n", WSAGetLastError());
             break;
         }
 
@@ -142,7 +142,7 @@ int Server::main(void)
                     SOCKET newfd = accept(listener, (struct sockaddr *)&remoteaddr, &addrlen);
                     if (newfd == INVALID_SOCKET)
                     {
-                        printf(GRAY "[SERVER LOG] accept failed: %d" RESET "\n", WSAGetLastError());
+                        write_formatted_log(GRAY "[SERVER LOG] accept failed: %d" RESET "\n", WSAGetLastError());
                     }
                     else
                     {
@@ -151,7 +151,7 @@ int Server::main(void)
                         {
                             fdmax = newfd;
                         }
-                        printf(
+                        write_formatted_log(
                             GRAY "[SERVER LOG] New connection from %s on socket %d" RESET "\n", 
                             inet_ntoa(((struct sockaddr_in *)&remoteaddr)->sin_addr), 
                             newfd);
@@ -167,11 +167,11 @@ int Server::main(void)
                         // Connection closed
                         if (nbytes == 0)
                         {
-                            printf(GRAY "[SERVER LOG] Socket %d hung up" RESET "\n", i);
+                            write_formatted_log(GRAY "[SERVER LOG] Socket %d hung up" RESET "\n", i);
                         }
                         else
                         {
-                            printf(GRAY "[SERVER LOG] recv failed: %d" RESET "\n", WSAGetLastError());
+                            write_formatted_log(GRAY "[SERVER LOG] recv failed: %d" RESET "\n", WSAGetLastError());
                         }
                         closesocket(i);
                         FD_CLR(i, &master);

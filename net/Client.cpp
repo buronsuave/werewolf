@@ -4,7 +4,7 @@ int Client::send_message(SOCKET s, char message[], int nbytes)
 {
     if (send(s, message, nbytes, 0) == SOCKET_ERROR)
     {
-        printf(GRAY "[CLIENT LOG] send failed: %d\n" RESET, WSAGetLastError());
+        write_formatted_log(GRAY "[CLIENT LOG] send failed: %d\n" RESET, WSAGetLastError());
         return 1;
     }
     else
@@ -29,7 +29,7 @@ SOCKET Client::get_connect_socket(void)
     int iResult = getaddrinfo(SERVER_IP, PORT, &hints, &result);
     if (iResult != 0)
     {
-        printf(GRAY "[CLIENT LOG] getaddrinfo failed: %d\n" RESET, iResult);
+        write_formatted_log(GRAY "[CLIENT LOG] getaddrinfo failed: %d\n" RESET, iResult);
         WSACleanup();
         return 1;
     }
@@ -41,7 +41,7 @@ SOCKET Client::get_connect_socket(void)
         connect_socket = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
         if (connect_socket == INVALID_SOCKET)
         {
-            printf(GRAY "[CLIENT LOG] socket failed: %d\n" RESET, WSAGetLastError());
+            write_formatted_log(GRAY "[CLIENT LOG] socket failed: %d\n" RESET, WSAGetLastError());
             WSACleanup();
             return 1;
         }
@@ -74,14 +74,14 @@ int Client::main(void)
     int i_result = WSAStartup(MAKEWORD(2, 2), &wsa_data);
     if (i_result != 0)
     {
-        printf(GRAY "[CLIENT LOG] WSAStartup failed: %d\n" RESET, i_result);
+        write_formatted_log(GRAY "[CLIENT LOG] WSAStartup failed: %d\n" RESET, i_result);
         return 1;
     }
 
     connect_socket = get_connect_socket();
     if (connect_socket == INVALID_SOCKET)
     {
-        printf(GRAY "[CLIENT LOG] Unable to connect to server!\n" RESET);
+        write_formatted_log(GRAY "[CLIENT LOG] Unable to connect to server!\n" RESET);
         WSACleanup();
         return 1;
     }
@@ -91,7 +91,7 @@ int Client::main(void)
     i_result = send(connect_socket, sendbuf, (int)strlen(sendbuf), 0);
     if (i_result == SOCKET_ERROR)
     {
-        printf(GRAY "[CLIENT LOG] send failed: %d\n" RESET, WSAGetLastError());
+        write_formatted_log(GRAY "[CLIENT LOG] send failed: %d\n" RESET, WSAGetLastError());
         closesocket(connect_socket);
         WSACleanup();
         return 1;
@@ -103,19 +103,19 @@ int Client::main(void)
         i_result = recv(connect_socket, recvbuf, recvbuflen, 0);
         if (i_result > 0)
         {
-            printf(GRAY "[CLIENT LOG] Bytes received: %d\n" RESET, i_result);
-            printf(GRAY "[CLIENT LOG] Received: %s\n" RESET, recvbuf);
+            write_formatted_log(GRAY "[CLIENT LOG] Bytes received: %d\n" RESET, i_result);
+            write_formatted_log(GRAY "[CLIENT LOG] Received: %s\n" RESET, recvbuf);
 
             // Handle received message
             handle_recv(recvbuf, connect_socket);
         }
         else if (i_result == 0)
         {
-            printf(GRAY "[CLIENT LOG] Connection closed\n" RESET);
+            write_formatted_log(GRAY "[CLIENT LOG] Connection closed\n" RESET);
         }
         else
         {
-            printf(GRAY "[CLIENT LOG] recv failed: %d\n" RESET, WSAGetLastError());
+            write_formatted_log(GRAY "[CLIENT LOG] recv failed: %d\n" RESET, WSAGetLastError());
             closesocket(connect_socket);
             WSACleanup();
             return 1;

@@ -1,1 +1,0 @@
-We will send here the [CLIENT LOG] and [SERVER LOG] strings

@@ -2,6 +2,14 @@
 echo "Cretaing .build folder";
 mkdir .build
 
+# Create .build/logs folder
+echo "Cretaing .build/logs folder";
+mkdir .build/logs
+
+# Create logs folder
+echo "Cretaing logs folder";
+mkdir logs
+
 # Compile client
 echo "Compiling client_app.cpp file";
 i686-w64-mingw32-gcc -o .build/client_app.exe app/client_app.cpp game/*.cpp net/*.cpp -lws2_32 -static-libgcc -static-libstdc++ -Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic;

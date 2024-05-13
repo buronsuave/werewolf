@@ -25,14 +25,14 @@ void GameClient::handle_recv(char buf[], SOCKET s)
             else if (strstr(buf, GAME_EVENT_START))
             {
                 printf("Main host started the play!\n");
-                printf(GRAY "[CLIENT LOG] Changing state to NIGHT\n" RESET);
+                write_formatted_log(GRAY "[CLIENT LOG] Changing state to NIGHT\n" RESET);
                 stage = STAGE_NIGHT;
                 return;
             }
             // Add case for loading card information
             else
             {
-                printf(GRAY "[CLIENT LOG] Unable to handle message\n" RESET);
+                write_formatted_log(GRAY "[CLIENT LOG] Unable to handle message\n" RESET);
                 return;
             }
 
