@@ -9,6 +9,7 @@
 #include <string.h>
 #include <fstream>
 #include <ctime>
+#include <vector>
 
 #pragma comment(lib, "Ws2_32.lib")
 

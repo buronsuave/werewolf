@@ -2,6 +2,7 @@
 #define GAME_SERVER_H
 
 #include "common.h"
+#include "Player.h"
 
 class GameServer : public Server
 {
@@ -9,6 +10,7 @@ class GameServer : public Server
     STAGE stage = STAGE_NEW;
 
     public:
+    std::vector<Player> players;
     void handle_recv(fd_set master, int fdmax, int listener, int i, char buf[], int nbytes);
 };
 

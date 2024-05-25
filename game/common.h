@@ -10,7 +10,19 @@ enum STAGE
     STAGE_DAY = 1,
     STAGE_NIGHT = 2,
     STAGE_OVER = 3,
-    STAGE_NEW = 4
+    STAGE_NEW = 4,
+    STAGE_VIEWER= 5,
+    STAGE_ROLE = 6    
+};
+
+enum ROLE
+{
+    ROLE_VILLAGER = 0,
+    ROLE_WEREWOLF = 1,
+    ROLE_WITCH = 2,
+    ROLE_HUNTER = 3,
+    ROLE_SEER = 4,
+    ROLE_UNASIGNED = 5
 };
 
 #define GAME_EVENT_MAINHOST "mainhost"
@@ -19,5 +31,9 @@ enum STAGE
 #define GAME_EVENT_LOBBY "lobby"
 #define GAME_EVENT_START "start"
 #define GAME_EVENT_BADREQUEST "badrequest"
+#define GAME_EVENT_NAME "name"
+
+#define GAME_MAX_PLAYERS 20
+#define GAME_MIN_PLAYERS 8
 
 #endif

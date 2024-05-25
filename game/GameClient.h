@@ -9,6 +9,7 @@ class GameClient : public Client
     STAGE stage = STAGE_LOBBY;
 
     public:
+    ROLE role;
     void handle_recv(char buf[], SOCKET s);
 };
 
