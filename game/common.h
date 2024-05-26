@@ -32,6 +32,7 @@ enum ROLE
 #define GAME_EVENT_START "start"
 #define GAME_EVENT_BADREQUEST "badrequest"
 #define GAME_EVENT_NAME "name"
+#define GAME_EVENT_ROLE "role"
 
 #define GAME_MAX_PLAYERS 20
 #define GAME_MIN_PLAYERS 8

@@ -53,7 +53,7 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
                       if(players.size() != 0){
 
                         char response[DEFAULT_BUFLEN] = GAME_EVENT_LOBBY;
-                        write_formatted_log(GRAY "[SERVER LOG] -----------------" RESET "\n");
+                        write_formatted_log(GRAY "[SERVER LOG] Its one player in join" RESET "\n");
                         send_message(i, response, listener, master, DEFAULT_BUFLEN);
                         return; 
 
@@ -117,16 +117,19 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
                 buf += strlen(GAME_EVENT_INIT);
                 // Check if string is already in one player
                 // if so...
+                    
+                      
+                 
 
                 if(players.size() != 0){
 
                         char response[DEFAULT_BUFLEN] = GAME_EVENT_MAINHOST;
-                        write_formatted_log(GRAY "[SERVER LOG] Its not players here" RESET "\n");
+                        write_formatted_log(GRAY "[SERVER LOG] Its one player waiting" RESET "\n");
+                        //MISS 
                         send_message(i, response, listener, master, DEFAULT_BUFLEN);
                         return; 
 
                       }
-
 
                 //      send game event mainhost
                 //      return
@@ -139,11 +142,24 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
                 write_formatted_log(GRAY "[SERVER LOG] Current value of fdmax: %d" RESET "\n", fdmax);
                 send_broadcast(fdmax, response, listener, master, DEFAULT_BUFLEN);
 
-                // TODO: Generar roles
-                return;
+                 
+                 AssignROLE();
 
+        //SEND ROLE ONE TO ONE
+                 for(auto player:players)
+                 {
+                 char response[DEFAULT_BUFLEN];
+                 strcpy(response,GAME_EVENT_ROLE);
+                 strcat(response,(player.role)+"");
+                 send_message(player.getFdId, response, listener, master, DEFAULT_BUFLEN);
+                 }
+
+    
+                // TODO: Generar roles
+            
                 write_formatted_log(GRAY "[SERVER LOG] Changing state to NIGHT" RESET "\n");
                 stage = STAGE_NIGHT;
+                return;
             }
             else
             {
@@ -155,4 +171,67 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
             break;
         }
     }
+}
+
+
+void GameServer::AssignROLE()
+{
+         srand(static_cast<unsigned>(time(0)));
+            int j = 0;
+            int villager = 0, witch = 0, hunter = 0, seer = 0, lobo = 0;
+            int wolf = ((players.size() - 3) / 5) + 1;
+     
+      while (j < players.size()) 
+      {
+        int randomNumber = rand() % 5;
+
+    // Solo asigna si el rol no ha sido asignado (inicialmente -1)
+            switch (randomNumber) 
+            {
+                case ROLE_VILLAGER:
+                    if (villager < (players.size() - wolf - 3)) {
+                        player[j].role = ROLE_VILLAGER;
+                        villager++;
+                        j++;
+                    }
+                    break;
+
+                case ROLE_WEREWOLF:
+                    if (lobo < wolf) {
+                        player[j].role = ROLE_WEREWOLF;
+                        lobo++;
+                        j++;
+                    }
+                    break;
+
+                case ROLE_WITCH:
+                    if (witch < 1) {
+                        player[j].role = ROLE_WITCH;
+                        witch++;
+                        j++;
+                    }
+                    break;
+
+                case ROLE_HUNTER:
+                    if (hunter < 1) {
+                       player[j].role= ROLE_HUNTER;
+                        hunter++;
+                        j++;
+                    }
+                    break;
+
+                case ROLE_SEER:
+                    if (seer < 1) {
+                        player[j].role = ROLE_SEER;
+                        seer++;
+                        j++;
+                    }
+                    break;
+
+                default:
+                    break;
+            
+        }
+    }
+ 
 }
