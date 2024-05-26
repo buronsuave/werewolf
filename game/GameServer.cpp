@@ -152,7 +152,7 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
                  strcpy(response,GAME_EVENT_ROLE);
                  strcat(response,(player.role)+"");
                  send_message(player.getFdId, response, listener, master, DEFAULT_BUFLEN);
-                  write_formatted_log(GRAY "[SERVER LOG] Sending Role for all players" RESET "\n");
+                  write_formatted_log(GRAY "[SERVER LOG] Sending Role for all " RESET "\n");
                  }
 
     
