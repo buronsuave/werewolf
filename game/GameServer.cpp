@@ -180,15 +180,18 @@ void GameServer::AssignROLE()
          srand(static_cast<unsigned>(time(0)));
             int j = 0;
             int villager = 0, witch = 0, hunter = 0, seer = 0, lobo = 0;
-            int wolf = ((players.size() - 3) / 5) + 1;
-     
-      while (j < players.size()) 
+            int wolf = ((players.size() - 3) / 5) + 1;//calculate the wolf
+
+     //so that the cycle is done for as long as it is smaller than the size of the players.
+      while (j <= players.size()) 
       {
+        //generate the random numbers
         int randomNumber = rand() % 5;
 
-    // Solo asigna si el rol no ha sido asignado (inicialmente -1)
+    
             switch (randomNumber) 
             {
+                //villagers
                 case ROLE_VILLAGER:
                     if (villager < (players.size() - wolf - 3)) {
                         player[j].role = ROLE_VILLAGER;
@@ -196,7 +199,7 @@ void GameServer::AssignROLE()
                         j++;
                     }
                     break;
-
+                    //for te total of player-3/5+1 that is for the total of wolf
                 case ROLE_WEREWOLF:
                     if (lobo < wolf) {
                         player[j].role = ROLE_WEREWOLF;
@@ -204,7 +207,7 @@ void GameServer::AssignROLE()
                         j++;
                     }
                     break;
-
+                  //for one witch cycle
                 case ROLE_WITCH:
                     if (witch < 1) {
                         player[j].role = ROLE_WITCH;
@@ -212,7 +215,7 @@ void GameServer::AssignROLE()
                         j++;
                     }
                     break;
-
+                 //for one hunter cycle
                 case ROLE_HUNTER:
                     if (hunter < 1) {
                        player[j].role= ROLE_HUNTER;
@@ -220,7 +223,7 @@ void GameServer::AssignROLE()
                         j++;
                     }
                     break;
-
+               //for one seer cycle
                 case ROLE_SEER:
                     if (seer < 1) {
                         player[j].role = ROLE_SEER;
