@@ -12,6 +12,15 @@ class GameServer : public Server
     public:
     std::vector<Player> players;
     void handle_recv(fd_set master, int fdmax, int listener, int i, char buf[], int nbytes);
+
+
+
+
+
+   
+
+
 };
+
 
 #endif
