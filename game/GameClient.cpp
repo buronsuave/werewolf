@@ -54,10 +54,24 @@ void GameClient::handle_recv(char buf[], SOCKET s)
 
         case STAGE_ROLE:
         {
-            // Deserializar el numero de rol y asignar con el rol equivalante
-            // Deserializar la info de la partida y mostrar
+             if (strstr(buf,GAME_EVENT_ROLE ))
+             {
+                
+             }
+             else {
+                printf("Error fatal");
+             }
+
 
         }
+        case STAGE_NIGHT:
+        {
+  
+        }
+        case STAGE_DAY:
+        {
+
+        } 
     }
 }
 

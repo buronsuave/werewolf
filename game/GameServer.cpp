@@ -1,5 +1,11 @@
 #include "GameServer.h"
 
+
+
+
+
+
+
 void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char buf[], int nbytes)
 {
     write_formatted_log(GRAY "[SERVER LOG] Message received: %s" RESET "\n", buf);
@@ -42,6 +48,17 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
                 buf += strlen(GAME_EVENT_NAME);
                 // Check if string is already in one player
                 // if so...
+
+                
+                      if(players.size() != 0){
+
+                        char response[DEFAULT_BUFLEN] = GAME_EVENT_LOBBY;
+                        write_formatted_log(GRAY "[SERVER LOG] -----------------" RESET "\n");
+                        send_message(i, response, listener, master, DEFAULT_BUFLEN);
+                        return; 
+
+                      }
+            
                 //      send game event lobby
                 //      return
                 Player player(i, buf);
@@ -51,7 +68,12 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
                 return;
             }
             else if (strstr(buf, GAME_EVENT_INIT)) // Needs to implement the check of current number of players
-            {
+            {   
+                
+                // unsigned int Current_Players;
+                // Current_Players = players.size();
+
+
                 if (players.size() < GAME_MIN_PLAYERS || players.size() > GAME_MAX_PLAYERS)
                 {
                     char response[DEFAULT_BUFLEN] = GAME_EVENT_MAINHOST;
@@ -95,6 +117,17 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
                 buf += strlen(GAME_EVENT_INIT);
                 // Check if string is already in one player
                 // if so...
+
+                if(players.size() != 0){
+
+                        char response[DEFAULT_BUFLEN] = GAME_EVENT_MAINHOST;
+                        write_formatted_log(GRAY "[SERVER LOG] Players in the Mainhost" RESET "\n");
+                        send_message(i, response, listener, master, DEFAULT_BUFLEN);
+                        return; 
+
+                      }
+
+
                 //      send game event mainhost
                 //      return
                 Player player(i, buf);
