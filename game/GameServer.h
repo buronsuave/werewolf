@@ -12,8 +12,9 @@ class GameServer : public Server
 
     public:
     std::vector<Player> players;
+    std::vector<Player> werewolves;
     void handle_recv(fd_set master, int fdmax, int listener, int i, char buf[], int nbytes);
-    void AssignROLE();
+    void AssignROLE(Player players, Player _role);
 
 };
 

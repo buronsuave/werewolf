@@ -88,7 +88,7 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
                 // REF: EXAMPLES
                 // EXAMPLE: HOW TO SEND A MESSAGE TO ALL WEREWOLVES?
 
-                // std::vector<Player> werewolves;
+                // 
                 // for (auto player:players)
                 // {
                 //     if (player.getRole() == ROLE_WEREWOLF && player.isAlive())
@@ -142,25 +142,29 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
                 write_formatted_log(GRAY "[SERVER LOG] Current value of fdmax: %d" RESET "\n", fdmax);
                 send_broadcast(fdmax, response, listener, master, DEFAULT_BUFLEN);
 
-                 
-                 AssignROLE();
+                
+                 AssignROLE(Player players, Player _role);
 
         //SEND ROLE ONE TO ONE
                  for(auto player:players)
                  {
                  char response[DEFAULT_BUFLEN];
                  strcpy(response,GAME_EVENT_ROLE);
-                 strcat(response,(player.role)+"");
+                 strcat(response,(player.role) + "");
                  send_message(player.getFdId, response, listener, master, DEFAULT_BUFLEN);
                   write_formatted_log(GRAY "[SERVER LOG] Sending Role for all " RESET "\n");
                  }
 
+
+                  //response = "role" + "0 o ROLE_VILLAGER"
     
                 // TODO: Generar roles
             
                 write_formatted_log(GRAY "[SERVER LOG] Changing state to NIGHT" RESET "\n");
                 stage = STAGE_NIGHT;
                 return;
+
+                 
             }
             else
             {
@@ -174,9 +178,9 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
         case STAGE_NIGHT :
         {
 
+       
 
-
-
+            
 
 
 
@@ -191,7 +195,7 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
 }
 
 
-void GameServer::AssignROLE()
+void GameServer::AssignROLE(Player players, Player _role)
 {
          srand(static_cast<unsigned>(time(0)));
             int j = 0;
@@ -211,7 +215,7 @@ void GameServer::AssignROLE()
                 case ROLE_VILLAGER:
                 {
                     if (villager < (players.size() - wolf - 3)) {
-                        player[j].role = ROLE_VILLAGER;
+                        players[j]._role = ROLE_VILLAGER;
                         villager++;
                         j++;
                     }
@@ -222,7 +226,7 @@ void GameServer::AssignROLE()
                 case ROLE_WEREWOLF:
                 {
                     if (lobo < wolf) {
-                        player[j].role = ROLE_WEREWOLF;
+                        players[j]._role = ROLE_WEREWOLF;
                         lobo++;
                         j++;
                     }
@@ -232,7 +236,7 @@ void GameServer::AssignROLE()
                 case ROLE_WITCH:
                 {
                     if (witch < 1) {
-                        player[j].role = ROLE_WITCH;
+                        players[j]._role = ROLE_WITCH;
                         witch++;
                         j++;
                     }
@@ -242,7 +246,7 @@ void GameServer::AssignROLE()
                 case ROLE_HUNTER:
                 {
                     if (hunter < 1) {
-                       player[j].role= ROLE_HUNTER;
+                       players[j]._role= ROLE_HUNTER;
                         hunter++;
                         j++;
                     }
@@ -252,7 +256,7 @@ void GameServer::AssignROLE()
                 case ROLE_SEER:
                 {
                     if (seer < 1) {
-                        player[j].role = ROLE_SEER;
+                        players[j]._role = ROLE_SEER;
                         seer++;
                         j++;
                     }

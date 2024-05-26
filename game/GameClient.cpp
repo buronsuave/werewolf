@@ -160,3 +160,7 @@ void GameClient::handle_recv(char buf[], SOCKET s)
             printf("Fatal error");
         } 
     }
+
+    }
+
+}
