@@ -209,45 +209,55 @@ void GameServer::AssignROLE()
             {
                 //villagers
                 case ROLE_VILLAGER:
+                {
                     if (villager < (players.size() - wolf - 3)) {
                         player[j].role = ROLE_VILLAGER;
                         villager++;
                         j++;
                     }
                     break;
+
+                }
                     //for te total of player-3/5+1 that is for the total of wolf
                 case ROLE_WEREWOLF:
+                {
                     if (lobo < wolf) {
                         player[j].role = ROLE_WEREWOLF;
                         lobo++;
                         j++;
                     }
                     break;
+                }
                   //for one witch cycle
                 case ROLE_WITCH:
+                {
                     if (witch < 1) {
                         player[j].role = ROLE_WITCH;
                         witch++;
                         j++;
                     }
                     break;
+                }
                  //for one hunter cycle
                 case ROLE_HUNTER:
+                {
                     if (hunter < 1) {
                        player[j].role= ROLE_HUNTER;
                         hunter++;
                         j++;
                     }
                     break;
+                }
                //for one seer cycle
                 case ROLE_SEER:
+                {
                     if (seer < 1) {
                         player[j].role = ROLE_SEER;
                         seer++;
                         j++;
                     }
                     break;
-
+                }
                 default:
                     break;
             
