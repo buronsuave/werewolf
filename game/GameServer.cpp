@@ -121,7 +121,7 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
                 if(players.size() != 0){
 
                         char response[DEFAULT_BUFLEN] = GAME_EVENT_MAINHOST;
-                        write_formatted_log(GRAY "[SERVER LOG] Players in the Mainhost" RESET "\n");
+                        write_formatted_log(GRAY "[SERVER LOG] Its not players here" RESET "\n");
                         send_message(i, response, listener, master, DEFAULT_BUFLEN);
                         return; 
 
