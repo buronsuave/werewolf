@@ -56,7 +56,7 @@ void GameClient::handle_recv(char buf[], SOCKET s)
         {
              if (strstr(buf,GAME_EVENT_ROLE ))
              {
-                
+               //LOGICA PARA EXTRAER ROLE 
              }
              else {
                 printf("Error fatal");
@@ -66,11 +66,98 @@ void GameClient::handle_recv(char buf[], SOCKET s)
         }
         case STAGE_NIGHT:
         {
-  
-        }
+            if(strstr(buf, GAME_EVENT_ACTION_WORELOF))
+          {
+            //ESPERAR ENTRADA DE USUARIO (VOTO)
+           // ENVIAR A SERVIDOR "VOTO LOBO" + VOTO
+           return;
+          }
+          if (strstr(buf, GAME_EVENT_ACTION_SEER))
+          {
+            //EXTRAER RESPUESTA DESDE EL MENSAJE
+            //MOSTRAR RESPUESTA
+            return;
+          }
+          if (strstr(buf, GAME_EVENT_ACTION_WITCH))
+          {
+            // ESPERAR ENTRADA DE USUARIO (JUGADOR, ACCION)
+            // ENVIAR A SERVIDOR "POCION BRUJA" + (JUGADOR, ACCION)
+            return;
+          }
+         
+          if(strstr(buf,GAME_EVENT_DAY))
+          {
+            stage = STAGE_ROLE;
+            return;
+          }
+          // si no error 
+          else {
+            printf("Fatal error");
+          }
+
+    }
         case STAGE_DAY:
         {
-
+         if(strstr(buf,GAME_EVENT_DAY))
+         {
+                //EXTRAER MUERTOS DESDE EL MENSAJE
+                //MOSTRAR MUERTOS
+                //SI ESTOY EN MUERTOS Y NO SOY CAZADOR
+                stage = STAGE_VIEWER;
+                return;
+         }
+         if(strstr(buf,GAME_EVENT_NEW))
+         {
+           // EXTRAER MUERTOS DESDE EL MENSAJE
+           // MOSTRAR MUERTOS
+           // SI ESTOY EN MUERTOS Y NO SOY CAZADOR
+         //{
+             stage = STAGE_VIEWER;
+         //}
+         }
+         if(strstr(buf,GAME_EVENT_ACTION_HUNTER1))
+         {
+            //ESPERAR ENTRADA DE USUARIO (JUGADOR)
+            //ENVIAR A SERVIDOR "VICTIMA CAZADOR 1" + JUGADOR 
+            stage=STAGE_VIEWER;
+            return;
+         }
+         if(strstr(buf,GAME_EVENT_ACTION_HUNTER2))
+         {
+           //ESPERAR ENTRADA DE USUARIO (JUGADOR)
+           //ENVIAR A SERVIDOR "VICTIMA CAZADOR 2" + JUGADOR
+           stage = STAGE_VIEWER;
+            return;
+         }
+         if(strstr(buf,GAME_EVENT_VICTIM_HUNTER))
+         {
+              //EXTRAER VICTIMA DESDE MENSAJE
+              //MOSTRAR VICTIMA
+              //SI SOY VICTIMA
+               stage = STAGE_VIEWER;
+            return;
+         }
+         if(strstr(buf,GAME_EVENT_ACTION_EVERYONE))
+         {
+            //ESPERAR ENTRADA DE USUARIO (VOTO)
+            //ENVIAR A SERVIDOR "VOTO JUGADOR" + VOTO
+            return;
+         }
+         if(strstr(buf,GAME_EVENT_NIGHT))
+         {
+            stage = STAGE_NIGHT;
+            return;
+         }
+         if(strstr(buf,GAME_EVENT_GAMEOVER))
+         {
+            //EXTRAER GANADOR DESDE EL MENSAJE
+            //MOSTRAR GANADOR
+            stage = STAGE_GAME_OVER;
+            return; //fin del juego
+         }
+         else
+         {
+            printf("Fatal error");
         } 
     }
 }
