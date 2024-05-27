@@ -7,6 +7,7 @@
 
 
 void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char buf[], int nbytes)
+
 {
     write_formatted_log(GRAY "[SERVER LOG] Message received: %s" RESET "\n", buf);
     switch (stage)
@@ -143,15 +144,15 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
                 send_broadcast(fdmax, response, listener, master, DEFAULT_BUFLEN);
 
                 
-                 AssignROLE(Player players, Player _role);
+                 void AssignROLE(std::vector<Player> players, ROLE _role);
 
         //SEND ROLE ONE TO ONE
                  for(auto player:players)
                  {
                  char response[DEFAULT_BUFLEN];
                  strcpy(response,GAME_EVENT_ROLE);
-                 strcat(response,(player.role) + "");
-                 send_message(player.getFdId, response, listener, master, DEFAULT_BUFLEN);
+                 strcat(response,(player._role) + "");
+                 send_message(player._fd_id, response, listener, master, DEFAULT_BUFLEN);
                   write_formatted_log(GRAY "[SERVER LOG] Sending Role for all " RESET "\n");
                  }
 
@@ -177,8 +178,8 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
         }
         case STAGE_NIGHT :
         {
-
-       
+     
+         
 
             
 
@@ -195,7 +196,7 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
 }
 
 
-void GameServer::AssignROLE(Player players, Player _role)
+void GameServer::AssignROLE(std::vector<Player> players, ROLE _role)
 {
          srand(static_cast<unsigned>(time(0)));
             int j = 0;
