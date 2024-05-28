@@ -108,37 +108,37 @@ void GameClient::handle_recv(char buf[], SOCKET s)
                 char VOTO[DEFAULT_BUFLEN] ;
                 std::cin.getline(response, DEFAULT_BUFLEN);
                 //ENVIAR A SERVIDOR "PREGUNTA VIDENTE" + JUGADOR
-                 strcpy(response, GAME_EVENT_CUESTION_SEER );
+                strcpy(response, GAME_EVENT_CUESTION_SEER );
                 strcat(response,VOTO);
                 send_message(s , response,DEFAULT_BUFLEN);
-               printf("tu voto selecionado es : %s",response);
+                printf("tu voto selecionado es : %s",response);
                 return;
             }
             if (strstr(buf,GAME_EVENT_RESPONSE_SEER)){
                 //EXTRAER RESPUESTA DESDE EL MENSAJE
                 char buf[DEFAULT_BUFLEN];
-            recv(s, buf, WINDOW_BUFFER_SIZE_EVENT - 1, 0);
-             char   respuesta[DEFAULT_BUFLEN];
-             strcpy(respuesta,buf);
+                recv(s, buf, WINDOW_BUFFER_SIZE_EVENT - 1, 0);
+                char   respuesta[DEFAULT_BUFLEN];
+                strcpy(respuesta,buf);
                 //MOSTRAR RESPUESTA
                 printf("la respuesta a la pregunta del seer es : %s",respuesta);
                 return;
             }
            if (strstr(buf, GAME_EVENT_ACTION_WITCH)) {
-        char jugador[DEFAULT_BUFLEN];
-        char accion[DEFAULT_BUFLEN];
-        char response[DEFAULT_BUFLEN];
-           //ESPERAR ENTRADA DE USUARIO (JUGADOR, ACCION)
-        printf("Ingrese el nombre del jugador: ");
-        std::cin.getline(jugador, DEFAULT_BUFLEN);
+                char jugador[DEFAULT_BUFLEN];
+                char accion[DEFAULT_BUFLEN];
+                char response[DEFAULT_BUFLEN];
+              //ESPERAR ENTRADA DE USUARIO (JUGADOR, ACCION)
+                printf("Ingrese el nombre del jugador: ");
+                std::cin.getline(jugador, DEFAULT_BUFLEN);
 
-        printf("Ingrese la acción de la bruja: ");
-        std::cin.getline(accion, DEFAULT_BUFLEN);
+                printf("Ingrese la acción de la bruja: ");
+                std::cin.getline(accion, DEFAULT_BUFLEN);
 
-          // Crear el mensaje para el servidor
-        snprintf(response, DEFAULT_BUFLEN, "%s: %s %s", GAME_EVENT_ACTION_WITCH, jugador, accion);
-          //ENVIAR A SERVIDOR "POCION BRUJA" + (JUGADOR, ACCION)
-        send(s, response, strlen(response), 0);
+                // Crear el mensaje para el servidor
+                snprintf(response, DEFAULT_BUFLEN, "%s: %s %s", GAME_EVENT_ACTION_WITCH, jugador, accion);
+               //ENVIAR A SERVIDOR "POCION BRUJA" + (JUGADOR, ACCION)
+               send(s, response, strlen(response), 0);
     }
             if (strstr(buf, GAME_EVENT_DAY))
             {
@@ -160,43 +160,70 @@ void GameClient::handle_recv(char buf[], SOCKET s)
 
                 // EXTRAER MUERTOS DESDE EL MENSAJE
                     char buf[DEFAULT_BUFLEN];
-                   recv(s, buf,  - 1, 0);
+                    recv(s, buf,  - 1, 0);
    
-               buf[DEFAULT_BUFLEN] = '\0'; // Añadir terminador de cadena
+                    buf[DEFAULT_BUFLEN] = '\0'; 
 
-    // Mostrar la lista de muertos recibida
-    std::cout << "La lista de muertos es: " << buf << std::endl;
                
-                return;
+
+                    // Mostrar la lista de muertos recibida
+                    printf( "La lista de muertos es: \n",buf) ;
+               
+                    return;
             }
         
             if (strstr(buf, GAME_EVENT_ACTION_HUNTER1))
             {
 
                 // ESPERAR ENTRADA DE USUARIO (JUGADOR)
+                 char response[DEFAULT_BUFLEN];
+                char Victima[DEFAULT_BUFLEN] ;
+                std::cin.getline(Victima, DEFAULT_BUFLEN);
                 // ENVIAR A SERVIDOR "VICTIMA CAZADOR 1" + JUGADOR 
+                strcpy(response, GAME_EVENT_ACTION_HUNTER1);
+                   strcat(response,Victima);
+                  send_message(s , response,DEFAULT_BUFLEN);
                 stage = STAGE_VIEWER;
                 return;
             }
             if (strstr(buf, GAME_EVENT_ACTION_HUNTER2))
             {
-                // ESPERAR ENTRADA DE USUARIO (JUGADOR)
-                // ENVIAR A SERVIDOR "VICTIMA CAZADOR 2" + JUGADOR
+               // ESPERAR ENTRADA DE USUARIO (JUGADOR)
+                 char response[DEFAULT_BUFLEN];
+                char Victima[DEFAULT_BUFLEN] ;
+                std::cin.getline(Victima, DEFAULT_BUFLEN);
+                // ENVIAR A SERVIDOR "VICTIMA CAZADOR 2" + JUGADOR 
+                strcpy(response, GAME_EVENT_ACTION_HUNTER2);
+                   strcat(response,Victima);
+                  send_message(s , response,DEFAULT_BUFLEN);
                 stage = STAGE_VIEWER;
                 return;
             }
             if (strstr(buf, GAME_EVENT_VICTIM_HUNTER))
             {
                 // EXTRAER VICTIMA DESDE MENSAJE
+                 char victim[DEFAULT_BUFLEN];
+                 recv(s, victim, DEFAULT_BUFLEN - 1, 0);
+                victim[DEFAULT_BUFLEN - 1] = '\0';
                 // MOSTRAR VICTIMA
-                // SI SOY VICTIMA
-                stage = STAGE_VIEWER;
+                
+                printf("La víctima es: %s\n", victim);
+                /* if (SI SOY VICTIMA){
+                    stage = STAGE_VIEWER;
+                } */
+                
                 return;
             }
             if (strstr(buf, GAME_EVENT_ACTION_EVERYONE))
             {
                 // ESPERAR ENTRADA DE USUARIO (VOTO)
+                 char response[DEFAULT_BUFLEN];
+                char Voto[DEFAULT_BUFLEN] ;
+                std::cin.getline(Voto, DEFAULT_BUFLEN);
                 // ENVIAR A SERVIDOR "VOTO JUGADOR" + VOTO
+                strcpy(response, GAME_EVENT_ACTION_HUNTER2);
+                   strcat(response,Voto);
+                  send_message(s , response,DEFAULT_BUFLEN);
                 return;
             }
             if (strstr(buf, GAME_EVENT_NIGHT))
@@ -207,7 +234,11 @@ void GameClient::handle_recv(char buf[], SOCKET s)
             if (strstr(buf, GAME_EVENT_GAMEOVER))
             {
                 // EXTRAER GANADOR DESDE EL MENSAJE
+                char Ganador[DEFAULT_BUFLEN];
+                 recv(s, Ganador, DEFAULT_BUFLEN - 1, 0);
+                Ganador[DEFAULT_BUFLEN - 1] = '\0';
                 // MOSTRAR GANADOR
+                printf("El ganador del juego es: %s\n", Ganador);
                 stage = STAGE_GAME_OVER;
                 return; // Fin del juego
             }

@@ -42,7 +42,7 @@ enum ROLE
 #define GAME_EVENT_VICTIM_HUNTER "cazador"
 #define GAME_EVENT_ACTION_HUNTER2 "hunter2"
 #define GAME_EVENT_ACTION_HUNTER1 "hunter1"
-#define GAME_EVENT_ACTION_EVERYONE "hunter1"
+#define GAME_EVENT_ACTION_EVERYONE "voto jugador"
 #define GAME_EVENT_NIGHT "nigth"
 #define GAME_EVENT_DAY "day"
 #define GAME_EVENT_NEW "new"
