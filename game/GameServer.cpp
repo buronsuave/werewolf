@@ -129,16 +129,16 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
                 void assign_role(std::vector<Player> players, ROLE _role);
 
         //SEND ROLE ONE TO ONE
-                 for(auto player:players)
-                 {
+                for(auto player:players)
+                {
 
-                    char response[DEFAULT_BUFLEN];
-                    strcpy(response,GAME_EVENT_ROLE);
-                    strcat(response,(player._role) + "");
-                    send_message(player._fd_id, response, listener, master, DEFAULT_BUFLEN);
-                    write_formatted_log(GRAY "[SERVER LOG] Sending Role for all " RESET "\n");
+                char response[DEFAULT_BUFLEN];
+                strcpy(response,GAME_EVENT_ROLE);
+                strcat(response,(player._role) + "");
+                send_message(player._fd_id, response, listener, master, DEFAULT_BUFLEN);
+                write_formatted_log(GRAY "[SERVER LOG] Sending Role for all " RESET "\n");
 
-                 }
+                }
 
 
                   //response = "role" + "0 o ROLE_VILLAGER"
@@ -153,9 +153,11 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
             }
             else
             {
+
                 char response[DEFAULT_BUFLEN] = GAME_EVENT_BADREQUEST;
                 write_formatted_log(GRAY "[SERVER LOG] Invalid message recieved" RESET "\n");
                 send_message(i, response, listener, master, DEFAULT_BUFLEN);
+
             }
 
             break;
@@ -274,23 +276,24 @@ void GameServer::check_name(std::vector<Player> players, fd_set master, int list
             if(strstr(players[i]._name, buf))
             {
 
-                printf("The name is alredy in use, try again with other name");
-                write_formatted_log(GRAY "[SERVER LOG] ERROR try again with other name player" RESET "\n");
+            printf("The name is alredy in use, try again with other name");
+            write_formatted_log(GRAY "[SERVER LOG] ERROR try again with other name player" RESET "\n");
                         
 
-                char response[DEFAULT_BUFLEN] = GAME_EVENT_NAME;
-                send_message(i, response, listener, master, DEFAULT_BUFLEN);
-                stage = STAGE_LOBBY;
-                return; 
+            char response[DEFAULT_BUFLEN] = GAME_EVENT_NAME;
+            send_message(i, response, listener, master, DEFAULT_BUFLEN);
+            stage = STAGE_LOBBY;
+            return; 
 
             }else
             {  
-                write_formatted_log(GRAY "[SERVER LOG] One more player its in the lobby" RESET "\n");
+
+            write_formatted_log(GRAY "[SERVER LOG] One more player its in the lobby" RESET "\n");
                         
 
-                char response[DEFAULT_BUFLEN] = GAME_EVENT_INIT;
-                send_message(i, response, listener, master, DEFAULT_BUFLEN);
-                return;
+            char response[DEFAULT_BUFLEN] = GAME_EVENT_INIT;
+            send_message(i, response, listener, master, DEFAULT_BUFLEN);
+            return;
             }
         }
 }
@@ -304,23 +307,23 @@ void GameServer::check_mainhost(std::vector<Player> players, fd_set master, int 
             if(strstr(buf, GAME_EVENT_MAINHOST))
             {
 
-                if(strstr(players[i]._name, buf)) 
-                {
+            if(strstr(players[i]._name, buf)) 
+            {
                          
-                    char response[DEFAULT_BUFLEN] = GAME_EVENT_LOBBY;
-                    write_formatted_log(GRAY "[SERVER LOG] Its the mainhost in the game" RESET "\n");
-                    send_message(i, response, listener, master, DEFAULT_BUFLEN);
-                    stage=STAGE_LOBBY;
-                    return; 
-                }
+            char response[DEFAULT_BUFLEN] = GAME_EVENT_LOBBY;
+            write_formatted_log(GRAY "[SERVER LOG] Its the mainhost in the game" RESET "\n");
+            send_message(i, response, listener, master, DEFAULT_BUFLEN);
+            stage=STAGE_LOBBY;
+            return; 
+            }
                             
             }else
             {
-                    char response[DEFAULT_BUFLEN] = GAME_EVENT_NEW;
-                    write_formatted_log(GRAY "[SERVER LOG] ERROR no mainhost " RESET "\n");
-                    send_message(i, response, listener, master, DEFAULT_BUFLEN);
-                    stage=STAGE_NEW;
-                    return;
+            char response[DEFAULT_BUFLEN] = GAME_EVENT_NEW;
+            write_formatted_log(GRAY "[SERVER LOG] ERROR no mainhost " RESET "\n");
+            send_message(i, response, listener, master, DEFAULT_BUFLEN);
+            stage=STAGE_NEW;
+            return;
             }
         }
 }
