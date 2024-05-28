@@ -51,15 +51,7 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
                 // if so...
 
                 
-                      if(players.size() != 0){
-
-                        char response[DEFAULT_BUFLEN] = GAME_EVENT_LOBBY;
-                        write_formatted_log(GRAY "[SERVER LOG] Its one player in join" RESET "\n");
-                        send_message(i, response, listener, master, DEFAULT_BUFLEN);
-                        return; 
-
-                      }
-            
+                 void check_mainhost(std::vector<Player> players, fd_set master, int listener, int i, char buf[], int nbytes);
                 //      send game event lobby
                 //      return
                 Player player(i, buf);
@@ -119,19 +111,9 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
                 // Check if string is already in one player
                 // if so...
                     
-                      
+                void check_name(std::vector<Player> players, fd_set master, int listener, int i, char buf[], int nbytes);  
                  
-
-                if(players.size() != 0){
-
-                        char response[DEFAULT_BUFLEN] = GAME_EVENT_MAINHOST;
-                        write_formatted_log(GRAY "[SERVER LOG] Its one player waiting" RESET "\n");
-                        //MISS 
-                        send_message(i, response, listener, master, DEFAULT_BUFLEN);
-                        return; 
-
-                      }
-
+          
                 //      send game event mainhost
                 //      return
                 Player player(i, buf);
@@ -144,16 +126,18 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
                 send_broadcast(fdmax, response, listener, master, DEFAULT_BUFLEN);
 
                 
-                 void AssignROLE(std::vector<Player> players, ROLE _role);
+                void assign_role(std::vector<Player> players, ROLE _role);
 
         //SEND ROLE ONE TO ONE
                  for(auto player:players)
                  {
-                 char response[DEFAULT_BUFLEN];
-                 strcpy(response,GAME_EVENT_ROLE);
-                 strcat(response,(player._role) + "");
-                 send_message(player._fd_id, response, listener, master, DEFAULT_BUFLEN);
-                  write_formatted_log(GRAY "[SERVER LOG] Sending Role for all " RESET "\n");
+
+                    char response[DEFAULT_BUFLEN];
+                    strcpy(response,GAME_EVENT_ROLE);
+                    strcat(response,(player._role) + "");
+                    send_message(player._fd_id, response, listener, master, DEFAULT_BUFLEN);
+                    write_formatted_log(GRAY "[SERVER LOG] Sending Role for all " RESET "\n");
+
                  }
 
 
@@ -196,77 +180,147 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
 }
 
 
-void GameServer::AssignROLE(std::vector<Player> players, ROLE _role)
+void GameServer::assign_role(std::vector<Player> players, ROLE _role)
 {
-         srand(static_cast<unsigned>(time(0)));
+            srand(static_cast<unsigned>(time(0)));
             int j = 0;
-            int villager = 0, witch = 0, hunter = 0, seer = 0, lobo = 0;
-            int wolf = ((players.size() - 3) / 5) + 1;//calculate the wolf
+            //To the total amount of each role.
+            int villager_role = 0, witch_role = 0, hunter_role = 0, seer_role = 0, wolf_role = 0;
+            //The total of wolf per role.
+            int total_wolf = (((players.size() - 3) / 5) * 2);//calculate the wolf
 
-     //so that the cycle is done for as long as it is smaller than the size of the players.
-      while (j <= players.size()) 
-      {
-        //generate the random numbers
-        int randomNumber = rand() % 5;
+            //So that the cycle is done for as long as it is smaller than the size of the players.
+            while (j <= players.size()) 
+           {
+                //Generate the random numbers
+                int randomNumber = rand() % 5;
 
     
-            switch (randomNumber) 
-            {
-                //villagers
+                switch (randomNumber) 
+              {
+
+                
                 case ROLE_VILLAGER:
                 {
-                    if (villager < (players.size() - wolf - 3)) {
+                    if (villager_role < (players.size() - total_wolf - 3)) 
+                    {
                         players[j]._role = ROLE_VILLAGER;
-                        villager++;
+                        villager_role++;
                         j++;
                     }
-                    break;
+                  break;
 
                 }
-                    //for te total of player-3/5+1 that is for the total of wolf
+                    
                 case ROLE_WEREWOLF:
                 {
-                    if (lobo < wolf) {
+                    if (wolf_role < total_wolf) 
+                    {
                         players[j]._role = ROLE_WEREWOLF;
-                        lobo++;
+                        wolf_role++;
                         j++;
                     }
-                    break;
+                  break;
                 }
-                  //for one witch cycle
+                 
                 case ROLE_WITCH:
                 {
-                    if (witch < 1) {
+                    if (witch_role < 1) 
+                    {
                         players[j]._role = ROLE_WITCH;
-                        witch++;
+                        witch_role++;
                         j++;
                     }
-                    break;
+                  break;
                 }
-                 //for one hunter cycle
+                 
                 case ROLE_HUNTER:
                 {
-                    if (hunter < 1) {
+                    if (hunter_role < 1) 
+                    {
                        players[j]._role= ROLE_HUNTER;
-                        hunter++;
-                        j++;
+                       hunter_role++;
+                       j++;
                     }
-                    break;
+                  break;
                 }
-               //for one seer cycle
+               
                 case ROLE_SEER:
                 {
-                    if (seer < 1) {
+                    if (seer_role < 1) 
+                    {
                         players[j]._role = ROLE_SEER;
-                        seer++;
+                        seer_role++;
                         j++;
                     }
-                    break;
+                  break;
                 }
+
                 default:
                     break;
             
-        }
-    }
+              }
+            }
  
+}
+
+
+void GameServer::check_name(std::vector<Player> players, fd_set master, int listener, int i, char buf[], int nbytes)
+{
+
+        for(auto player:players)
+        {
+           //TO check if the players have the same name
+            if(strstr(players[i]._name, buf))
+            {
+
+                printf("The name is alredy in use, try again with other name");
+                write_formatted_log(GRAY "[SERVER LOG] ERROR try again with other name player" RESET "\n");
+                        
+
+                char response[DEFAULT_BUFLEN] = GAME_EVENT_NAME;
+                send_message(i, response, listener, master, DEFAULT_BUFLEN);
+                stage = STAGE_LOBBY;
+                return; 
+
+            }else
+            {  
+                write_formatted_log(GRAY "[SERVER LOG] One more player its in the lobby" RESET "\n");
+                        
+
+                char response[DEFAULT_BUFLEN] = GAME_EVENT_INIT;
+                send_message(i, response, listener, master, DEFAULT_BUFLEN);
+                return;
+            }
+        }
+}
+
+void GameServer::check_mainhost(std::vector<Player> players, fd_set master, int listener, int i, char buf[], int nbytes)
+{
+
+        for (auto player:players)
+        {
+                    
+            if(strstr(buf, GAME_EVENT_MAINHOST))
+            {
+
+                if(strstr(players[i]._name, buf)) 
+                {
+                         
+                    char response[DEFAULT_BUFLEN] = GAME_EVENT_LOBBY;
+                    write_formatted_log(GRAY "[SERVER LOG] Its the mainhost in the game" RESET "\n");
+                    send_message(i, response, listener, master, DEFAULT_BUFLEN);
+                    stage=STAGE_LOBBY;
+                    return; 
+                }
+                            
+            }else
+            {
+                    char response[DEFAULT_BUFLEN] = GAME_EVENT_NEW;
+                    write_formatted_log(GRAY "[SERVER LOG] ERROR no mainhost " RESET "\n");
+                    send_message(i, response, listener, master, DEFAULT_BUFLEN);
+                    stage=STAGE_NEW;
+                    return;
+            }
+        }
 }
