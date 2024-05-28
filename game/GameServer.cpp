@@ -53,7 +53,7 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
                       if(players.size() != 0){
 
                         char response[DEFAULT_BUFLEN] = GAME_EVENT_LOBBY;
-                        write_formatted_log(GRAY "[SERVER LOG] -----------------" RESET "\n");
+                        write_formatted_log(GRAY "[SERVER LOG] Its one player in join" RESET "\n");
                         send_message(i, response, listener, master, DEFAULT_BUFLEN);
                         return; 
 
@@ -88,7 +88,7 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
                 // REF: EXAMPLES
                 // EXAMPLE: HOW TO SEND A MESSAGE TO ALL WEREWOLVES?
 
-                // std::vector<Player> werewolves;
+                // 
                 // for (auto player:players)
                 // {
                 //     if (player.getRole() == ROLE_WEREWOLF && player.isAlive())
@@ -117,16 +117,19 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
                 buf += strlen(GAME_EVENT_INIT);
                 // Check if string is already in one player
                 // if so...
+                    
+                      
+                 
 
                 if(players.size() != 0){
 
                         char response[DEFAULT_BUFLEN] = GAME_EVENT_MAINHOST;
-                        write_formatted_log(GRAY "[SERVER LOG] Players in the Mainhost" RESET "\n");
+                        write_formatted_log(GRAY "[SERVER LOG] Its one player waiting" RESET "\n");
+                        //MISS 
                         send_message(i, response, listener, master, DEFAULT_BUFLEN);
                         return; 
 
                       }
-
 
                 //      send game event mainhost
                 //      return
@@ -139,11 +142,29 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
                 write_formatted_log(GRAY "[SERVER LOG] Current value of fdmax: %d" RESET "\n", fdmax);
                 send_broadcast(fdmax, response, listener, master, DEFAULT_BUFLEN);
 
-                // TODO: Generar roles
-                return;
+                
+                 AssignROLE(Player players, Player _role);
 
+        //SEND ROLE ONE TO ONE
+                 for(auto player:players)
+                 {
+                 char response[DEFAULT_BUFLEN];
+                 strcpy(response,GAME_EVENT_ROLE);
+                 strcat(response,(players._role) + "");
+                 send_message(player.getFdId, response, listener, master, DEFAULT_BUFLEN);
+                  write_formatted_log(GRAY "[SERVER LOG] Sending Role for all " RESET "\n");
+                 }
+
+
+                  //response = "role" + "0 o ROLE_VILLAGER"
+    
+                // TODO: Generar roles
+            
                 write_formatted_log(GRAY "[SERVER LOG] Changing state to NIGHT" RESET "\n");
                 stage = STAGE_NIGHT;
+                return;
+
+                 
             }
             else
             {
@@ -154,5 +175,97 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
 
             break;
         }
+        case STAGE_NIGHT :
+        {
+     
+         
+
+            
+
+
+
+
+
+
+
+
+
+        }
     }
+}
+
+
+void GameServer::AssignROLE(Player players, Player _role)
+{
+         srand(static_cast<unsigned>(time(0)));
+            int j = 0;
+            int villager = 0, witch = 0, hunter = 0, seer = 0, lobo = 0;
+            int wolf = ((players.size() - 3) / 5) + 1;//calculate the wolf
+
+     //so that the cycle is done for as long as it is smaller than the size of the players.
+      while (j <= players.size()) 
+      {
+        //generate the random numbers
+        int randomNumber = rand() % 5;
+
+    
+            switch (randomNumber) 
+            {
+                //villagers
+                case ROLE_VILLAGER:
+                {
+                    if (villager < (players.size() - wolf - 3)) {
+                        players[j]._role = ROLE_VILLAGER;
+                        villager++;
+                        j++;
+                    }
+                    break;
+
+                }
+                    //for te total of player-3/5+1 that is for the total of wolf
+                case ROLE_WEREWOLF:
+                {
+                    if (lobo < wolf) {
+                        players[j]._role = ROLE_WEREWOLF;
+                        lobo++;
+                        j++;
+                    }
+                    break;
+                }
+                  //for one witch cycle
+                case ROLE_WITCH:
+                {
+                    if (witch < 1) {
+                        players[j]._role = ROLE_WITCH;
+                        witch++;
+                        j++;
+                    }
+                    break;
+                }
+                 //for one hunter cycle
+                case ROLE_HUNTER:
+                {
+                    if (hunter < 1) {
+                       players[j]._role= ROLE_HUNTER;
+                        hunter++;
+                        j++;
+                    }
+                    break;
+                }
+               //for one seer cycle
+                case ROLE_SEER:
+                {
+                    if (seer < 1) {
+                        players[j]._role = ROLE_SEER;
+                        seer++;
+                        j++;
+                    }
+                    break;
+                }
+                default:
+                    break;
+            
+        }
+    }
+ 
 }

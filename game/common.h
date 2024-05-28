@@ -37,6 +37,8 @@ enum ROLE
 #define GAME_EVENT_ACTION_WORELOF "worelof"
 #define GAME_EVENT_ACTION_WITCH "witch"
 #define GAME_EVENT_ACTION_SEER "seer"
+#define GAME_EVENT_CUESTION_SEER "seer"
+#define GAME_EVENT_RESPONSE_SEER "response"
 #define GAME_EVENT_VICTIM_HUNTER "cazador"
 #define GAME_EVENT_ACTION_HUNTER2 "hunter2"
 #define GAME_EVENT_ACTION_HUNTER1 "hunter1"
@@ -45,6 +47,7 @@ enum ROLE
 #define GAME_EVENT_DAY "day"
 #define GAME_EVENT_NEW "new"
 #define GAME_EVENT_GAMEOVER "gameover"
+#define GAME_EVENT_VOTO_LOBO "voto_lobo"
 
 #define GAME_MAX_PLAYERS 20
 #define GAME_MIN_PLAYERS 8
