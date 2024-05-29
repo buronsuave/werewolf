@@ -2,7 +2,7 @@
 
 class Player
 {
-    private:
+    public:
     int _fd_id;
     ROLE _role;
     bool _alive;
