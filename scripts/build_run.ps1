@@ -18,12 +18,14 @@ g++ -o .build/client_app.exe app/client_app.cpp game/*.cpp net/*.cpp -lws2_32
 Write-Host "Compiling server_app.cpp file" -ForegroundColor Yellow;
 g++ -o .build/server_app.exe app/server_app.cpp game/*.cpp net/*.cpp -lws2_32
 
-# Execute server and then client
+# Execute server
 Write-Host "Launching executions" -ForegroundColor Yellow;
 Start powershell {Write-Host "Executing Server..." -ForegroundColor Blue; ./.build/server_app.exe;}
 Start-Sleep -Seconds 2
-Start powershell {Write-Host "Executing Client 1..." -ForegroundColor Green; ./.build/client_app.exe;}
-Start-Sleep -Seconds 1
-Start powershell {Write-Host "Executing Client 2..." -ForegroundColor Green; ./.build/client_app.exe;}
-Start-Sleep -Seconds 1
-Start powershell {Write-Host "Executing Client 3..." -ForegroundColor Green; ./.build/client_app.exe;}
+
+# Launch 9 clients in sequence
+for ($i = 1; $i -le 9; $i++) {
+    $clientScript = "Write-Host 'Executing Client $i...' -ForegroundColor Green; ./.build/client_app.exe"
+    Start-Process powershell -ArgumentList $clientScript
+    Start-Sleep -Seconds 1
+}
