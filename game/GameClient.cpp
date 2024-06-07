@@ -58,7 +58,7 @@ void GameClient::handle_recv(char buf[], SOCKET s)
              {
                //LOGICA PARA EXTRAER ROLE 
              }
-             else {
+             else {//POR ESO SE IMPRIME FATAL
                 printf("Error fatal");
              }
 
@@ -66,7 +66,7 @@ void GameClient::handle_recv(char buf[], SOCKET s)
         }
         case STAGE_NIGHT:
         {
-            if(strstr(buf, GAME_EVENT_ACTION_WORELOF))
+            if(strstr(buf, GAME_EVENT_ACTION_WEREWOLF))
           {
             //ESPERAR ENTRADA DE USUARIO (VOTO)
            // ENVIAR A SERVIDOR "VOTO LOBO" + VOTO

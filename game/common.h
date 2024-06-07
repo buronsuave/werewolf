@@ -26,6 +26,10 @@ enum ROLE
     ROLE_UNASIGNED = 5
 };
 
+ 
+ 
+
+
 #define GAME_EVENT_MAINHOST "mainhost"
 #define GAME_EVENT_JOIN "join"
 #define GAME_EVENT_INIT "init"
@@ -34,7 +38,7 @@ enum ROLE
 #define GAME_EVENT_BADREQUEST "badrequest"
 #define GAME_EVENT_NAME "name"
 #define GAME_EVENT_ROLE "role"
-#define GAME_EVENT_ACTION_WORELOF "worelof"
+#define GAME_EVENT_ACTION_WEREWOLF "werewolf"
 #define GAME_EVENT_ACTION_WITCH "witch"
 #define GAME_EVENT_ACTION_SEER "seer"
 #define GAME_EVENT_VICTIM_HUNTER "cazador"
@@ -48,5 +52,9 @@ enum ROLE
 
 #define GAME_MAX_PLAYERS 20
 #define GAME_MIN_PLAYERS 8
+
+
+
+
 
 #endif
