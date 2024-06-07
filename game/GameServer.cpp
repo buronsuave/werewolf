@@ -133,12 +133,12 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
                 send_broadcast(fdmax, response, listener, master, DEFAULT_BUFLEN);
                   
                 
-                void assign_role(std::vector<Player> players, ROLE _role);
+                assign_role();
 
         //SEND ROLE ONE TO ONE
 
                
-                   int j=0;
+                int j=0;
                 for(auto &player:players)
                 {
 
@@ -151,22 +151,17 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
                 write_formatted_log(GRAY "[SERVER LOG] Role%u" RESET "\n", players[j].getRole());*/
                 
                  char response[DEFAULT_BUFLEN];
-                    snprintf(response, DEFAULT_BUFLEN, "%s %d", GAME_EVENT_ROLE, player._role);
+                    snprintf(response, DEFAULT_BUFLEN, "%s%d", GAME_EVENT_ROLE, player._role);
                     send_message(player._fd_id, response, listener, master, DEFAULT_BUFLEN);
-                    write_formatted_log(GRAY "[SERVER LOG] Sending Role for all" RESET "\n");
+                    write_formatted_log(GRAY "[SERVER LOG] Sending Role for client %d" RESET "\n", j);
 
                      j++;
                 }
 
-
                 //response = "role" + "0 o ROLE_VILLAGER"
-    
-               
-            
                 write_formatted_log(GRAY "[SERVER LOG] Changing state to NIGHT" RESET "\n");
                 stage = STAGE_NIGHT;
                 return;
-
                  
             }
             else
@@ -247,18 +242,14 @@ void GameServer::assign_role( )
             //The total of wolf per role.
             int total_wolf = (((players.size() - 3) / 5) * 2);//calculate the wolf
              
-            int randomNumber = rand() % 4; 
+            int randomNumber = rand() % 5; 
             
             //So that the cycle is done for as long as it is smaller than the size of the players.
             while (j < players.size()) 
            {
                 //Generate the random numbers
                 
-                
-               randomNumber = rand() % 4; 
-               
-
-
+               randomNumber = rand() % 5; 
                 switch (randomNumber) 
               {
 

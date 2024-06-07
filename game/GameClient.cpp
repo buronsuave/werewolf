@@ -38,7 +38,7 @@ void GameClient::handle_recv(char buf[], SOCKET s)
             else if (strstr(buf, GAME_EVENT_START))
             {
                 printf("Main host started the play!\n");
-                write_formatted_log(GRAY "[CLIENT LOG] Changing state to NIGHT\n" RESET);
+                write_formatted_log(GRAY "[CLIENT LOG] Changing state to ROLE\n" RESET);
                 stage = STAGE_ROLE;
                 return;
             }
@@ -54,13 +54,19 @@ void GameClient::handle_recv(char buf[], SOCKET s)
 
         case STAGE_ROLE:
         {
-             if (strstr(buf,GAME_EVENT_ROLE ))
+             if (strstr(buf,GAME_EVENT_ROLE))
              {
-               //LOGICA PARA EXTRAER ROLE 
+                int t;
+                sscanf(buf + strlen(GAME_EVENT_ROLE), "%d", &t);
+                this->role = ROLE(t);
+                printf("My role is %d", this->role);
+                write_formatted_log(GRAY "[CLIENT LOG] Changing state to NIGHT\n" RESET);
+                this->stage = STAGE_NIGHT;
              }
              else {//POR ESO SE IMPRIME FATAL
-                printf("Error fatal");
+                printf("Fatal Error from STAGE ROLE: %s", buf);
              }
+             break;
 
 
         }
@@ -87,13 +93,15 @@ void GameClient::handle_recv(char buf[], SOCKET s)
          
           if(strstr(buf,GAME_EVENT_DAY))
           {
+            // ?
             stage = STAGE_ROLE;
             return;
           }
           // si no error 
           else {
-            printf("Fatal error");
+            printf("Fatal Error from STAGE NIGHT: %s", buf);
           }
+          break;
 
     }
         case STAGE_DAY:
@@ -157,7 +165,7 @@ void GameClient::handle_recv(char buf[], SOCKET s)
          }
          else
          {
-            printf("Fatal error");
+            printf("Fatal Error from STAGE DAY %s", buf);
         } 
     }
 
