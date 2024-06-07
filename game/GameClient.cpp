@@ -59,12 +59,38 @@ void GameClient::handle_recv(char buf[], SOCKET s)
                 int t;
                 sscanf(buf + strlen(GAME_EVENT_ROLE), "%d", &t);
                 this->role = ROLE(t);
-                printf("My role is %d", this->role);
+
+           //printf("My role is %d", this->role); borrar al final
+              
+              //To send the rol in string format
+        switch (this->role) {
+            case 0:
+                printf(" Eres un villager. Su objetivo es eliminar a los werewolves.\n");
+                break;
+            case 1:
+                printf("Eres un werewolf. Su objetivo es eliminar a los villagers sin ser atrapado.\n");
+                break;
+            case 2:
+                printf("Eres un seer. Puede verificar el rol de un jugador cada noche.\n");
+                break;
+            case 3:
+                printf("Eres es un witch. Puede verificar el rol de un jugador cada noche.\n");
+                break;
+            case 4:
+                 printf("Eres es un hunter. Su objetivo es eliminar a los werewolves.\n");
+                break;
+            default:
+                printf("Rol desconocido para el jugador.\n");
+                break;
+
+              }
+
                 write_formatted_log(GRAY "[CLIENT LOG] Changing state to NIGHT\n" RESET);
                 this->stage = STAGE_NIGHT;
              }
              else {//POR ESO SE IMPRIME FATAL
                 printf("Fatal Error from STAGE ROLE: %s", buf);
+                
              }
              break;
 
