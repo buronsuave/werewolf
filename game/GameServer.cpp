@@ -48,58 +48,35 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
             }
             else if (strstr(buf, GAME_EVENT_NAME))
             {
-
-                
-
                 // Create Player and assign name
                 buf += strlen(GAME_EVENT_NAME);
                 // Check if string is already in one player
-                // if so...
-
-                //YA no se que pedo pero pues cualquier cosa xd
-                 
-                 
-                //      send game event lobby
-                //      return
-
-            char playerName[DEFAULT_BUFLEN];
-            strcpy(playerName, buf);
-
-
-
 
                 Player player(i, buf);
-
-       //Funcion boleana y meter al codigo
-
                 players.push_back(player);
+                printf("Player with name %s has joinded\n", players[players.size()-1].getName());
 
-                printf("Player with name %s has joinded", players[players.size()-1].getName());
-                int conter=0;
+                for(auto player:players)
+                {
+                  if (strcmp(player._name, buf)==0 && strlen(player._name) == strlen(buf) )
+                  {
+                    printf("The name is already  in use, try again with another name\n");
+                    write_formatted_log(GRAY "[SERVER LOG] ERROR: Name already in use" RESET "\n");
 
-                bool nameExists = false;
-
-   /*while(conter < players.size()){
-        if (strcmp(players[conter].getName(), buf)==0 && players.size()-1 != conter )
-        {
-            printf("The name is already in use, try again with another name");
-            write_formatted_log(GRAY "[SERVER LOG] ERROR: Name already in use" RESET "\n");
-
-            char response[DEFAULT_BUFLEN] = GAME_EVENT_NAME;
-            send_message(i, response, listener, master, DEFAULT_BUFLEN);
-            players.pop_back();
-            
-        }
-         conter++;
-        }
-
-*/        
-
-
+                    char response[DEFAULT_BUFLEN];
+                    snprintf(response, DEFAULT_BUFLEN, "%s %s",GAME_EVENT_NAME, player._name);
+                    send_message(player._fd_id, response, listener, master, DEFAULT_BUFLEN);
+                    players.pop_back();
+                    return;
+                  } else
+                  {
+                   write_formatted_log(GRAY "[SERVER LOG] One more player is in game" RESET "\n");
+                   return;
+                  }
+         
+                }
                 return;
             }
-            
-
             else if (strstr(buf, GAME_EVENT_INIT)) // Needs to implement the check of current number of players
             {   
                 
@@ -168,25 +145,18 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
                 write_formatted_log(GRAY "[SERVER LOG] si paso" RESET "\n");
                 send_broadcast(fdmax, response, listener, master, DEFAULT_BUFLEN);
                   
-                 
                 assign_role();
 
-        //SEND ROLE ONE TO ONE
-
-               
-                int j=0;
+                //SEND ROLE ONE TO ONE
                 for(auto &player:players)
                 {
-                
                     char response[DEFAULT_BUFLEN];
                     snprintf(response, DEFAULT_BUFLEN, "%s%d", GAME_EVENT_ROLE, player._role);
                     send_message(player._fd_id, response, listener, master, DEFAULT_BUFLEN);
-                    write_formatted_log(GRAY "[SERVER LOG] Sending Role for client %d" RESET "\n", j);
+                    write_formatted_log(GRAY "[SERVER LOG] Sending Role for client " RESET "\n");
 
-                     j++;
                 }
 
-                //response = "role" + "0 o ROLE_VILLAGER"
                 write_formatted_log(GRAY "[SERVER LOG] Changing state to NIGHT" RESET "\n");
                 stage = STAGE_NIGHT;
                 return;
@@ -200,12 +170,11 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
                 send_message(i, response, listener, master, DEFAULT_BUFLEN);
                 return;
             }
-
-            break;
-        }
+                 break;
         case STAGE_NIGHT :
         {
-            if(strstr(buf, GAME_EVENT_ACTION_WEREWOLF)){
+            if(strstr(buf, GAME_EVENT_ACTION_WEREWOLF))
+            {
 
            //Mensjae contiene "voto lobo"-extrajer votos y agregar lista de votos de lobos y ver la eliminacion
         
@@ -214,21 +183,24 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
 
                 return;
 
-            }else if (strstr(buf, GAME_EVENT_ACTION_SEER)){
+            }else if (strstr(buf, GAME_EVENT_ACTION_SEER))
+            {
 
 
 
 
 
                 return;
-            }else if(strstr(buf, GAME_EVENT_ACTION_WITCH)){
+            }else if(strstr(buf, GAME_EVENT_ACTION_WITCH))
+            {
 
 
 
 
 
                 return;
-            }else{
+            }else
+            {
 
 
             }
@@ -256,10 +228,10 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
 
               
 
-        }
+      }
     }
+  }
 }
-
 
 void GameServer::assign_role( )
 {
@@ -346,7 +318,7 @@ void GameServer::assign_role( )
           
 }
 
-void GameServer::check_mainhost(std::vector<Player> players, fd_set master, int listener, int i, char buf[], int nbytes)
+void GameServer::check_mainhost(fd_set master, int listener, int i, char buf[], int nbytes)
 {
 
         for (auto player:players)
@@ -377,7 +349,7 @@ void GameServer::check_mainhost(std::vector<Player> players, fd_set master, int 
 }
 
 
- void GameServer::player_list(std::vector<Player> players,fd_set master, int listener, int fdmax, char buf[], int nbytes)   
+ void GameServer::player_list(fd_set master, int listener, int fdmax, char buf[], int nbytes)   
  {
     //quitar aprametro player maybe no te creas a lo mejor no
               for(auto player:players)
@@ -403,7 +375,7 @@ void GameServer::check_mainhost(std::vector<Player> players, fd_set master, int 
                 }
 }
 
- void GameServer::current_players_check(std::vector<Player> players,fd_set master, int listener, int fdmax, char buf[], int nbytes){
+ void GameServer::current_players_check(fd_set master, int listener, int fdmax, char buf[], int nbytes){
 unsigned int Current_Players=0;
  int j=0;
  //deberia quitar parametro player?
