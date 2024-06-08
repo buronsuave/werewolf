@@ -5,7 +5,8 @@ Player::Player(int fd_id, char* name)
     this->_fd_id = fd_id;
     this->_role = ROLE_UNASIGNED;
     this->_alive = true;
-    this->_name = name;
+    strncpy(this->_name, name, sizeof(this->_name) - 1);
+    this->_name[sizeof(this->_name) - 1] = '\0';
 }
 
 int Player::getFdId()
@@ -43,7 +44,8 @@ void Player::setAlive(bool alive)
     this->_alive = alive;
 }
 
-void Player::setName(char* name)
+void Player::setName(const char* name)
 {
-    this->_name = name;
+    strncpy(this->_name, name, sizeof(this->_name) - 1);
+    this->_name[sizeof(this->_name) - 1] = '\0'; 
 }

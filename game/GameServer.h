@@ -12,11 +12,8 @@ class GameServer : public Server
 
     public:
     std::vector<Player> players;
-    std::vector<Player> werewolves;
-    std::vector<Player> seer;
-    std::vector<Player> hunter;
-    std::vector<Player> witch;
-    std::vector<Player> villager;
+    int conter=0;
+
 
     void handle_recv(fd_set master, int fdmax, int listener, int i, char buf[], int nbytes);
     void assign_role();

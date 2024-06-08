@@ -56,25 +56,28 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
                 players.push_back(player);
                 printf("Player with name %s has joinded\n", players[players.size()-1].getName());
 
-                for(auto player:players)
+              /*for (auto &player:players)
                 {
-                  if (strcmp(player._name, buf)==0 && strlen(player._name) == strlen(buf) )
-                  {
-                    printf("The name is already  in use, try again with another name\n");
-                    write_formatted_log(GRAY "[SERVER LOG] ERROR: Name already in use" RESET "\n");
+                    printf("players: %i = %s \n", j, players[j].getName());
+                }*/
 
-                    char response[DEFAULT_BUFLEN];
-                    snprintf(response, DEFAULT_BUFLEN, "%s %s",GAME_EVENT_NAME, player._name);
-                    send_message(player._fd_id, response, listener, master, DEFAULT_BUFLEN);
-                    players.pop_back();
-                    return;
-                  } else
-                  {
-                   write_formatted_log(GRAY "[SERVER LOG] One more player is in game" RESET "\n");
-                   return;
-                  }
-         
+                
+                while(conter < players.size() - 1)
+                {
+                        if (strcmp(players[conter].getName(), players[players.size() - 1].getName()) == 0)
+                        {
+                            printf("The name is already in use, try again with another name\n");
+                            write_formatted_log(GRAY "[SERVER LOG] ERROR: Name already in use" RESET "\n");
+
+                            char response[DEFAULT_BUFLEN] = GAME_EVENT_NAME;
+                            send_message(i, response, listener, master, DEFAULT_BUFLEN);
+                            players.pop_back();
+                            break;
+                        }
+                    conter++;
                 }
+         
+                
                 return;
             }
             else if (strstr(buf, GAME_EVENT_INIT)) // Needs to implement the check of current number of players

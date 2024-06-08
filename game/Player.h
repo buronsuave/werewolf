@@ -6,11 +6,11 @@ class Player
     int _fd_id;
     ROLE _role;
     bool _alive;
-    char* _name;
+    char _name[DEFAULT_BUFLEN];
 
     public:
     // constructor
-    Player(int fd_id, char* name);
+    Player(int fd_id,const char* name);
 
     // getters
     int getFdId();
@@ -22,5 +22,5 @@ class Player
     void setFdId(int fd_id);
     void setRole(ROLE role);
     void setAlive(bool alive);
-    void setName(char* name);
+    void setName(const char* name);
 };
