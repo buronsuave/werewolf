@@ -82,7 +82,6 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
                 char response[DEFAULT_BUFLEN] = GAME_EVENT_START;
                 write_formatted_log(GRAY "[SERVER LOG] Init request detected" RESET "\n");
                 write_formatted_log(GRAY "[SERVER LOG] Current value of fdmax: %d" RESET "\n", fdmax);
-                write_formatted_log(GRAY "[SERVER LOG] si paso" RESET "\n");
                 send_broadcast(fdmax, response, listener, master, DEFAULT_BUFLEN);
                   
                 assign_role();
@@ -103,8 +102,8 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
                
                 werewolf_action(master, listener);
 
-                printf("The wolves are voting.\n");
-                write_formatted_log(GRAY "[SERVER LOG] The wolves are voting." RESET "\n");
+                printf("The werewolves are voting.\n");
+                write_formatted_log(GRAY "[SERVER LOG] The werewolves are voting." RESET "\n");
                 
                   stage = STAGE_NIGHT;
                   return;
@@ -151,9 +150,9 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
               }
               players[kill_player]._alive = false;
                char response[DEFAULT_BUFLEN];
-              snprintf(response, DEFAULT_BUFLEN, "You have kill: %s", players[kill_player]._name);
-              printf("player: %s has died", players[kill_player]._name);
-              write_formatted_log(GRAY "[SERVER LOG] one player has died." RESET "\n");
+              snprintf(response, DEFAULT_BUFLEN, "You have been killed: %s\n", players[kill_player]._name);
+              printf("Player: %s has died\n", players[kill_player]._name);
+              write_formatted_log(GRAY "[SERVER LOG] One player has died." RESET "\n");
              
             }
 
@@ -170,12 +169,12 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
                 buf += strlen(GAME_EVENT_ACTION_WITCH);
                 if(strstr(buf, GAME_EVENT_ACTION_SAVE)){
                      char response[DEFAULT_BUFLEN] = GAME_EVENT_ACTION_SAVE;
-                write_formatted_log(GRAY "[SERVER LOG]Action witch server decision" RESET "\n");//modificar el log
+                write_formatted_log(GRAY "[SERVER LOG] Action witch server decision" RESET "\n");//modificar el log
                 send_message(i, response, listener, master, DEFAULT_BUFLEN);
                 return;
                   }else if(strstr(buf, GAME_EVENT_ACTION_KILL)){
                          char response[DEFAULT_BUFLEN] = GAME_EVENT_ACTION_KILL;
-                write_formatted_log(GRAY "[SERVER LOG]Action witch server decision" RESET "\n");
+                write_formatted_log(GRAY "[SERVER LOG] Action witch server decision" RESET "\n");
                 send_message(i, response, listener, master, DEFAULT_BUFLEN);
                 return;
                   }else{
@@ -188,8 +187,8 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
                   for(auto &player:players){
                      if(strstr(player._name,buf)){
                         player._alive= true;
-                        printf("player: %s has save ", player._name);
-                        write_formatted_log(GRAY "[SERVER LOG] Sending the actions of the witch " RESET "\n");
+                        printf("Player: %s has been saved.\n", player._name);
+                        write_formatted_log(GRAY "[SERVER LOG] Sending the action of the witch" RESET "\n");
                       
                     
                       } 
@@ -203,7 +202,7 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
                for(auto &player:players){
                      if(strstr(player._name,buf)){
                         player._alive= false;
-                        printf("\nplayer: %s has died ", player._name);
+                        printf("Player: %s has been killed.\n", player._name);
                         write_formatted_log(GRAY "[SERVER LOG] Sending the action of the witch " RESET "\n");
                     
                     
@@ -222,14 +221,14 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
                  for(auto &player:players){
                   if(strstr(player._name,buf)){
                     if(player._role==1){
-                      printf("\nplayer: %s is a wolf ", player._name);
-                      write_formatted_log(GRAY "[SERVER LOG] Sending the action to the seer 1 " RESET "\n");
+                      printf("Player: %s is a werewolf.\n", player._name);
+                      write_formatted_log(GRAY "[SERVER LOG] Sending the action to the seer (1) " RESET "\n");
                       char response[DEFAULT_BUFLEN] = GAME_EVENT_SEER_CHECK_WOLF;
                       send_message(i, response, listener, master, nbytes);
                     }else{
 
-                      printf("\nplayer: %s is not a wolf ", player._name);
-                      write_formatted_log(GRAY "[SERVER LOG] Sending the action to the seer 2 " RESET "\n");
+                      printf("Player: %s is not a werewolf.\n", player._name);
+                      write_formatted_log(GRAY "[SERVER LOG] Sending the action to the seer (2) " RESET "\n");
                       char response[DEFAULT_BUFLEN] = GAME_EVENT_SEER_CHECK_NOWOLF;
                       send_message(i, response, listener, master, nbytes);
                     }
@@ -237,7 +236,7 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
                  }
 
                 char response[DEFAULT_BUFLEN] = GAME_EVENT_DAY;
-                write_formatted_log(GRAY "[SERVER LOG] Changing to day " RESET "\n");
+                write_formatted_log(GRAY "[SERVER LOG] Changing STAGE to DAY " RESET "\n");
                 for (auto &player:players)
                 {
                   send_broadcast(player._fd_id, response, listener, master, DEFAULT_BUFLEN);
@@ -253,7 +252,7 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
             if(strstr(buf,GAME_EVENT_DAY))
             {
               buf += strlen(GAME_EVENT_DAY);
-              printf("Estamos en el dia");
+              printf("Day actions.\n");
     
             }
           }  
@@ -358,7 +357,7 @@ void GameServer::check_mainhost(fd_set master, int listener, int i, char buf[], 
             {
                          
             char response[DEFAULT_BUFLEN] = GAME_EVENT_LOBBY;
-            write_formatted_log(GRAY "[SERVER LOG] Its the mainhost in the game" RESET "\n");
+            write_formatted_log(GRAY "[SERVER LOG] The mainhost is in the game" RESET "\n");
             send_message(i, response, listener, master, DEFAULT_BUFLEN);
             stage=STAGE_LOBBY;
             return; 
@@ -367,7 +366,7 @@ void GameServer::check_mainhost(fd_set master, int listener, int i, char buf[], 
             }else
             {
             char response[DEFAULT_BUFLEN] = GAME_EVENT_NEW;
-            write_formatted_log(GRAY "[SERVER LOG] ERROR no mainhost " RESET "\n");
+            write_formatted_log(GRAY "[SERVER LOG] ERROR, there's no mainhost " RESET "\n");
             send_message(i, response, listener, master, DEFAULT_BUFLEN);
             stage=STAGE_NEW;
             return;
@@ -382,14 +381,14 @@ void GameServer::check_mainhost(fd_set master, int listener, int i, char buf[], 
 
         if(player._alive==true)
         {
-           printf("Player: %s esta vivo", player.getName());           
+           printf("Player: %s you're alive", player.getName());           
            char response[DEFAULT_BUFLEN] = GAME_EVENT_ALIVE_PLAYERS;
            send_broadcast(fdmax, response, listener, master, DEFAULT_BUFLEN);
            write_formatted_log(GRAY "[SERVER LOG] Sending the list of players " RESET "\n");
         }
         else
          {
-            write_formatted_log(GRAY "[SERVER LOG] The player is not alive " RESET "\n");
+            write_formatted_log(GRAY "[SERVER LOG] The player is no longer alive " RESET "\n");
          }
 
       }
@@ -410,7 +409,7 @@ void GameServer::check_mainhost(fd_set master, int listener, int i, char buf[], 
 
                         char response[DEFAULT_BUFLEN];
                          write_formatted_log(GRAY "[SERVER LOG] Sending the current players " RESET "\n");
-                         printf("The currents players letf %u \n",Current_Players);
+                         printf("Players alive: %u \n", Current_Players);
                          snprintf(response, DEFAULT_BUFLEN, "%s%u",GAME_EVENT_OVER, Current_Players); 
                          send_broadcast(fdmax, response, listener, master, DEFAULT_BUFLEN);
                          
@@ -474,11 +473,11 @@ void GameServer::check_mainhost(fd_set master, int listener, int i, char buf[], 
            snprintf(response, DEFAULT_BUFLEN, "%s", player._name);
            send_broadcast(fdmax, response, listener, master, DEFAULT_BUFLEN);
            write_formatted_log(GRAY "[SERVER LOG] Sending the list of players " RESET "\n");
-           printf("Player: %s esta vivo", player.getName());           
+           printf("Player: %s you're still alive", player.getName());           
         }
         else
          {
-            write_formatted_log(GRAY "[SERVER LOG] The player is not alive " RESET "\n");
+            write_formatted_log(GRAY "[SERVER LOG] The player is no longer alive " RESET "\n");
          }
 
       }
@@ -494,13 +493,13 @@ void GameServer::witch_action(fd_set master, int listener)
     if (player._role == 2)//si es bruja
     {
       char response[DEFAULT_BUFLEN] = GAME_EVENT_ACTION_WITCH;
-      write_formatted_log(GRAY "[SERVER LOG] Brujas deciden" RESET "\n");
+      write_formatted_log(GRAY "[SERVER LOG] Witch action" RESET "\n");
       send_message(player._fd_id, response, listener, master, DEFAULT_BUFLEN);
     }
     else 
     {
       char response[DEFAULT_BUFLEN] = GAME_EVENT_ACTION_WAITING;
-      write_formatted_log(GRAY "[SERVER LOG] brujas decideen" RESET "\n");
+      write_formatted_log(GRAY "[SERVER LOG] Waiting for action" RESET "\n");
       send_message(player._fd_id, response, listener, master, DEFAULT_BUFLEN);
     }
   }
@@ -513,14 +512,14 @@ void GameServer::werewolf_action(fd_set master, int listener){
                   if(player._role==1)//si es werewolf
                   {
                     char response[DEFAULT_BUFLEN] = GAME_EVENT_ACTION_WEREWOLF;
-                    write_formatted_log(GRAY "[SERVER LOG] the wolves are watching who to kill " RESET "\n");
+                    write_formatted_log(GRAY "[SERVER LOG] Werewolves action " RESET "\n");
                     send_message(player._fd_id, response, listener, master, DEFAULT_BUFLEN);
                     
                   }
                   else
                   {
                     char response[DEFAULT_BUFLEN] = GAME_EVENT_ACTION_WAITING;
-                    write_formatted_log(GRAY "[SERVER LOG] the players are waiting " RESET "\n");
+                    write_formatted_log(GRAY "[SERVER LOG] Waiting for action" RESET "\n");
                     send_message(player._fd_id, response, listener, master, DEFAULT_BUFLEN);
                   }
                 }
@@ -534,13 +533,13 @@ void GameServer::seer_action(fd_set master, int listener){
                   if(player._role==3)//si es seer
                   {
                     char response[DEFAULT_BUFLEN] = GAME_EVENT_ACTION_SEER;
-                    write_formatted_log(GRAY "[SERVER LOG] the seer is watching who is the wolf " RESET "\n");
+                    write_formatted_log(GRAY "[SERVER LOG] Seer action" RESET "\n");
                     send_message(player._fd_id, response, listener, master, DEFAULT_BUFLEN);
                   }
                   else
                   {
                     char response[DEFAULT_BUFLEN] = GAME_EVENT_ACTION_WAITING;
-                    write_formatted_log(GRAY "[SERVER LOG] the players are waiting " RESET "\n");
+                    write_formatted_log(GRAY "[SERVER LOG] Waiting for action" RESET "\n");
                     send_message(player._fd_id, response, listener, master, DEFAULT_BUFLEN);
                   }
                 }

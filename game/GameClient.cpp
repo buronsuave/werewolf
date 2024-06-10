@@ -66,22 +66,22 @@ void GameClient::handle_recv(char buf[], SOCKET s)
               //To send the rol in string format
         switch (this->role) {
             case 0:
-                printf(" Eres un villager. Su objetivo es eliminar a los werewolves.\n");
+                printf("You're a villager. Your objective is to eliminate the werewolves.\n");
                 break;
             case 1:
-                printf("Eres un werewolf. Su objetivo es eliminar a los villagers sin ser atrapado.\n");
+                printf("You're a werewolf. Your objective is to eliminate the villagers without being caught.\n");
                 break;
             case 2:
-                printf("Eres la witch. Puedes salvar a alguien o matarlo.\n");
+                printf("You're the witch. You can kill or save someone.\n");
                 break;
             case 3:
-                printf("Eres es un seer. Puede verificar el rol de un jugador cada noche.\n");
+                printf("You're the seer. You can ask for the role of someone during night.\n");
                 break;
             case 4:
-                 printf("Eres es un hunter. Su objetivo es eliminar a los werewolves.\n");
+                 printf("You're the hunter. You can kill someone when you've been killed. Your objective is to eliminate the werewolves.\n");
                 break;
             default:
-                printf("Rol desconocido para el jugador.\n");
+                printf("Unknown role.\n");
                 break;
 
               }
@@ -101,10 +101,6 @@ void GameClient::handle_recv(char buf[], SOCKET s)
         {
            
 
-
-
-
-
         }*/
         case STAGE_NIGHT:
         {
@@ -112,10 +108,9 @@ void GameClient::handle_recv(char buf[], SOCKET s)
           {
             //ESPERAR ENTRADA DE USUARIO (VOTO)
            // ENVIAR A SERVIDOR "VOTO LOBO" + VOTO
-
-              printf("You are the wolf\n");
-              printf("They must choose who they want to kill \n");
-              printf("write the name of the person who will die: ");
+              printf("You are a wolf.\n");
+              printf("You must vote for who will be killed during this night.\n");
+              printf("Write the name of the person who will die: ");
               char response[DEFAULT_BUFLEN];
               char person_to_kill[DEFAULT_BUFLEN];
               strcpy(response, GAME_EVENT_ACTION_WEREWOLF);
@@ -126,9 +121,9 @@ void GameClient::handle_recv(char buf[], SOCKET s)
           }
           else if (strstr(buf, GAME_EVENT_ACTION_SEER))
           {
-              printf("You are the seer\n");
-              printf("you must choose who want to know if he/she is a wolf \n");
-              printf("write the name of the person do you want to know: ");
+              printf("You are the seer.\n");
+              printf("You must choose someone and ask if they is a werewolf.\n");
+              printf("Write the name of the person do you want to know: ");
               char response[DEFAULT_BUFLEN];
               char person_know[DEFAULT_BUFLEN];
               strcpy(response, GAME_EVENT_ACTION_SEER);
@@ -139,7 +134,7 @@ void GameClient::handle_recv(char buf[], SOCKET s)
           }
           else if (strstr(buf, GAME_EVENT_SEER_CHECK_WOLF))
           {
-              printf("The player you see was a wolf\n");
+              printf("The player you asked for is a werewolf.\n");
               char response[DEFAULT_BUFLEN];
               strcpy(response, GAME_EVENT_DAY);
               send_message(s, response, DEFAULT_BUFLEN);
@@ -148,7 +143,7 @@ void GameClient::handle_recv(char buf[], SOCKET s)
           }
           else if (strstr(buf, GAME_EVENT_SEER_CHECK_NOWOLF))
           {
-              printf("The player you see was NOT a wolf\n");
+              printf("The player you asked for is NOT a werewolf.\n");
               char response[DEFAULT_BUFLEN];
               strcpy(response, GAME_EVENT_DAY);
               send_message(s, response, DEFAULT_BUFLEN);
@@ -157,15 +152,11 @@ void GameClient::handle_recv(char buf[], SOCKET s)
           }
           else if (strstr(buf, GAME_EVENT_ACTION_WITCH))
           {
-              printf("You are the witch\n");
-              printf("you must choose who they want to kill or save \n");
-              printf("write the action do you want to do: ");
+              printf("You are the witch.\n");
+              printf("You must choose someone and decide if will be saved or killed.\n");
+              printf("Write the action do you want to do: ");
               char save_kill[DEFAULT_BUFLEN]; 
-              
-
              std::cin.getline(save_kill, DEFAULT_BUFLEN);
-
-
                 if (strstr(save_kill,GAME_EVENT_ACTION_SAVE)){
                   char response[DEFAULT_BUFLEN];
                    strcpy(response, GAME_EVENT_ACTION_WITCH);
@@ -179,15 +170,14 @@ void GameClient::handle_recv(char buf[], SOCKET s)
                   
                 }else{
  
-
+                    // Something else... (error while selecting option)
                 }
-
             return;
           }else if(strstr(buf, GAME_EVENT_ACTION_SAVE)){
 
           char person_to_kill[DEFAULT_BUFLEN];
           char response[DEFAULT_BUFLEN];
-                 printf("write the name of the person who will save: ");
+                 printf("Write the name of the person who will be saved: ");
                  std::cin.getline(person_to_kill, DEFAULT_BUFLEN);
 
             strcpy(response, GAME_EVENT_ACTION_SAVE);
@@ -200,7 +190,7 @@ return;
 
   char person_to_kill[DEFAULT_BUFLEN];
           char response[DEFAULT_BUFLEN];
-                 printf("write the name of the person who will die: ");
+                 printf("Write the name of the person who will be killed: ");
                  std::cin.getline(person_to_kill, DEFAULT_BUFLEN);
 
             strcpy(response, GAME_EVENT_ACTION_KILL);
@@ -212,7 +202,7 @@ return;
 
           else if (strstr(buf, GAME_EVENT_ACTION_WAITING))
           {
-            printf("The other players are doing their actions\n");
+            printf("Wait until all the other players are done with their actions.\n");
             return;
           }
           else if(strstr(buf,GAME_EVENT_DAY))
@@ -227,10 +217,10 @@ return;
           // si no error 
           if (strstr(buf, GAME_EVENT_ALIVE_PLAYERS))
           {
-            printf("estas vivo");
+            printf("You're still alive.\n");
           }
           else {
-            printf("Fatal Error from STAGE NIGHT");
+            printf("Fatal Error from STAGE NIGHT.\n");
           }
           break;
 
@@ -239,7 +229,7 @@ return;
         {
          if(strstr(buf,GAME_EVENT_DAY))
          {
-                printf("Es de dia voten por una persona");
+                printf("Day actions.\n");
                 return;
          }
          if(strstr(buf,GAME_EVENT_NEW))
@@ -294,7 +284,7 @@ return;
          }
          else
          {
-            printf("Fatal Error from STAGE DAY ");
+            printf("Fatal Error from STAGE DAY.\n");
         } 
     }
 
