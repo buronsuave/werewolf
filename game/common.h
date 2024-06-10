@@ -12,8 +12,7 @@ enum STAGE
     STAGE_OVER = 3,
     STAGE_NEW = 4,
     STAGE_VIEWER= 5,
-    STAGE_ROLE = 6,  
-    STAGE_GAME_OVER = 7  
+    STAGE_ROLE = 6,   
 };
 
 enum ROLE
@@ -42,14 +41,17 @@ enum ROLE
 #define GAME_EVENT_ACTION_WITCH "witch"
 #define GAME_EVENT_ACTION_SEER "seer"
 #define GAME_EVENT_VICTIM_HUNTER "cazador"
-#define GAME_EVENT_ACTION_HUNTER2 "hunter2"
-#define GAME_EVENT_ACTION_HUNTER1 "hunter1"
-#define GAME_EVENT_ACTION_EVERYONE "hunter1"
+#define GAME_EVENT_ACTION_SAVE "save"
+#define GAME_EVENT_ACTION_KILL "kill"
+#define GAME_EVENT_ALIVE_PLAYERS "alive"
 #define GAME_EVENT_NIGHT "nigth"
 #define GAME_EVENT_DAY "day"
 #define GAME_EVENT_NEW "new"
-#define GAME_EVENT_GAMEOVER "gameover"
-
+#define GAME_EVENT_OVER "gameover"
+#define GAME_EVENT_ACTION_WAITING "waiting"
+#define GAME_EVENT_SEER_CHECK_WOLF "check_wolf"
+#define GAME_EVENT_SEER_CHECK_NOWOLF "check_nowolf"
+#define GAME_EVENT_ACTION_EVERYONE "everyone"
 #define GAME_MAX_PLAYERS 20
 #define GAME_MIN_PLAYERS 8
 

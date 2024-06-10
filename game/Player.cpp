@@ -1,12 +1,14 @@
 #include "Player.h"
+#include <cstring> // Asegúrate de incluir cstring para strncpy
 
-Player::Player(int fd_id, char* name)
+Player::Player(int fd_id, const char* name)
 {
     this->_fd_id = fd_id;
     this->_role = ROLE_UNASIGNED;
     this->_alive = true;
     strncpy(this->_name, name, sizeof(this->_name) - 1);
-    this->_name[sizeof(this->_name) - 1] = '\0';
+    this->_name[sizeof(this->_name) - 1] = '\0'; // Asegura que _name esté null-terminated
+    this->_vote = _vote;
 }
 
 int Player::getFdId()
@@ -47,5 +49,5 @@ void Player::setAlive(bool alive)
 void Player::setName(const char* name)
 {
     strncpy(this->_name, name, sizeof(this->_name) - 1);
-    this->_name[sizeof(this->_name) - 1] = '\0'; 
+    this->_name[sizeof(this->_name) - 1] = '\0'; // Asegura que _name esté null-terminated
 }
