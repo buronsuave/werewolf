@@ -109,7 +109,12 @@ void GameClient::handle_recv(char buf[], SOCKET s)
             //ESPERAR ENTRADA DE USUARIO (VOTO)
            // ENVIAR A SERVIDOR "VOTO LOBO" + VOTO
               printf("You are a wolf.\n");
-              printf("You must vote for who will be killed during this night.\n");
+              printf("You must vote for who will be killed during this night.\n\n");
+              
+              // Unwrap list of active players
+              buf += strlen(GAME_EVENT_ACTION_WEREWOLF);
+              print_active_players(buf);
+
               printf("Write the name of the person who will die: ");
               char response[DEFAULT_BUFLEN];
               char person_to_kill[DEFAULT_BUFLEN];
@@ -122,7 +127,12 @@ void GameClient::handle_recv(char buf[], SOCKET s)
           else if (strstr(buf, GAME_EVENT_ACTION_SEER))
           {
               printf("You are the seer.\n");
-              printf("You must choose someone and ask if they is a werewolf.\n");
+              printf("You must choose someone and ask if they is a werewolf.\n\n");
+
+              // Unwrap list of active players
+              buf += strlen(GAME_EVENT_ACTION_SEER);
+              print_active_players(buf);
+
               printf("Write the name of the person do you want to know: ");
               char response[DEFAULT_BUFLEN];
               char person_know[DEFAULT_BUFLEN];
@@ -153,7 +163,12 @@ void GameClient::handle_recv(char buf[], SOCKET s)
           else if (strstr(buf, GAME_EVENT_ACTION_WITCH))
           {
               printf("You are the witch.\n");
-              printf("You must choose someone and decide if will be saved or killed.\n");
+              printf("You must choose someone and decide if will be saved or killed.\n\n");
+
+              // Unwrap list of active players
+              buf += strlen(GAME_EVENT_ACTION_WITCH);
+              print_active_players(buf);
+
               printf("Write the action do you want to do: ");
               char save_kill[DEFAULT_BUFLEN]; 
              std::cin.getline(save_kill, DEFAULT_BUFLEN);
@@ -290,4 +305,16 @@ return;
 
     }
 
+}
+
+void GameClient::print_active_players(char* players)
+{
+    printf("Active Players: \n");
+    while (*players != '\0')
+    {
+        if (*players != ',') printf("%c", *players);
+        else printf("\n");
+        players++;
+    }
+    printf("\n\n");
 }

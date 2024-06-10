@@ -25,7 +25,7 @@ class GameServer : public Server
     void witch_action(fd_set master, int listener);
     void werewolf_action(fd_set master, int listener);
     void seer_action(fd_set master, int listener);
-    
+    void get_active_players(char* active_players);
 }; 
 
 #endif

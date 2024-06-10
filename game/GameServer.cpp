@@ -95,10 +95,7 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
                 }
 
                    printf("The roles have already been assigned.\n");
-
                   write_formatted_log(GRAY "[SERVER LOG] Changing state to NIGHT" RESET "\n");
-
-                //funcion werewolf_action
                
                 werewolf_action(master, listener);
 
@@ -121,8 +118,8 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
 
           if(strstr(buf, GAME_EVENT_ACTION_WEREWOLF))
           {
-
-            int total_wolfs = (((players.size() - 3) / 5) * 2);//calculate the wolf
+            // We might replace this calculation because we need to check the CURRENT number of werewolves (iterate over all the alive players)
+            int total_wolfs = (((players.size() - 3) / 5) * 2); //calculate the wolf
             int votes_wolfs = 0;
             int counter = 0;
             int kill_player=0;
@@ -157,6 +154,7 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
             }
 
             if(votes_wolfs==total_wolfs){
+                // Only of witch is alive?
                  witch_action(master, listener);
             }
 
@@ -165,16 +163,16 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
             else if (strstr(buf, GAME_EVENT_ACTION_WITCH))
             {
               
-              //BRUJA MATA O PROTEGE A ALGUIEN
+              // OK
                 buf += strlen(GAME_EVENT_ACTION_WITCH);
                 if(strstr(buf, GAME_EVENT_ACTION_SAVE)){
                      char response[DEFAULT_BUFLEN] = GAME_EVENT_ACTION_SAVE;
-                write_formatted_log(GRAY "[SERVER LOG] Action witch server decision" RESET "\n");//modificar el log
+                write_formatted_log(GRAY "[SERVER LOG] Action witch server decision (save)" RESET "\n"); // modificar el log
                 send_message(i, response, listener, master, DEFAULT_BUFLEN);
                 return;
                   }else if(strstr(buf, GAME_EVENT_ACTION_KILL)){
                          char response[DEFAULT_BUFLEN] = GAME_EVENT_ACTION_KILL;
-                write_formatted_log(GRAY "[SERVER LOG] Action witch server decision" RESET "\n");
+                write_formatted_log(GRAY "[SERVER LOG] Action witch server decision (kill)" RESET "\n");
                 send_message(i, response, listener, master, DEFAULT_BUFLEN);
                 return;
                   }else{
@@ -394,6 +392,22 @@ void GameServer::check_mainhost(fd_set master, int listener, int i, char buf[], 
       }
 }
 
+void GameServer::get_active_players(char* active_players)
+{
+  for (auto &player:players)
+  {
+    if (player.isAlive())
+    {
+      strcat(active_players,player.getName());
+      if (player.getFdId() != players[players.size()-1].getFdId())
+      {
+        strcat(active_players, ",");
+      }
+    }
+  }
+  strcat(active_players, "\0");
+}
+
  void GameServer::current_players_check(fd_set master, int listener, int fdmax){
  unsigned int Current_Players=0;
                 
@@ -487,12 +501,15 @@ void GameServer::witch_action(fd_set master, int listener)
 {
 
   //no envia a brujas el evento
-  
   for (auto &player:players)
   {
     if (player._role == 2)//si es bruja
     {
+      char active_players[DEFAULT_BUFLEN] = "";
+      get_active_players(active_players);
+
       char response[DEFAULT_BUFLEN] = GAME_EVENT_ACTION_WITCH;
+      strcat(response, active_players);
       write_formatted_log(GRAY "[SERVER LOG] Witch action" RESET "\n");
       send_message(player._fd_id, response, listener, master, DEFAULT_BUFLEN);
     }
@@ -505,16 +522,21 @@ void GameServer::witch_action(fd_set master, int listener)
   }
 }
 
-void GameServer::werewolf_action(fd_set master, int listener){
 
+
+void GameServer::werewolf_action(fd_set master, int listener){
      for(auto &player:players)
                 {
                   if(player._role==1)//si es werewolf
                   {
+                    // Append here in response the list of all the active players
+                    char active_players[DEFAULT_BUFLEN] = "";
+                    get_active_players(active_players);
+
                     char response[DEFAULT_BUFLEN] = GAME_EVENT_ACTION_WEREWOLF;
+                    strcat(response, active_players);
                     write_formatted_log(GRAY "[SERVER LOG] Werewolves action " RESET "\n");
                     send_message(player._fd_id, response, listener, master, DEFAULT_BUFLEN);
-                    
                   }
                   else
                   {
@@ -532,8 +554,12 @@ void GameServer::seer_action(fd_set master, int listener){
                 {
                   if(player._role==3)//si es seer
                   {
+                    char active_players[DEFAULT_BUFLEN] = "";
+                    get_active_players(active_players);
+
                     char response[DEFAULT_BUFLEN] = GAME_EVENT_ACTION_SEER;
                     write_formatted_log(GRAY "[SERVER LOG] Seer action" RESET "\n");
+                    strcat(response, active_players);
                     send_message(player._fd_id, response, listener, master, DEFAULT_BUFLEN);
                   }
                   else
