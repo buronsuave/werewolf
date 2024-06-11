@@ -112,6 +112,7 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
                 send_message(i, response, listener, master, DEFAULT_BUFLEN);
                 return;
             }
+        }
                 break;
         case STAGE_NIGHT :
         {
@@ -150,12 +151,21 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
               snprintf(response, DEFAULT_BUFLEN, "You have been killed: %s\n", players[kill_player]._name);
               printf("Player: %s has died\n", players[kill_player]._name);
               write_formatted_log(GRAY "[SERVER LOG] One player has died." RESET "\n");
-             
+             //revisar dudillas
             }
 
             if(votes_wolfs==total_wolfs){
-                // Only of witch is alive?
+                for(auto &player:players){
+                  if(player._role==2){
+                    if(player._alive==true){
                  witch_action(master, listener);
+                    return;
+                  }else{
+                    seer_action(master,listener);
+                    return;
+                  }
+                 }
+                }
             }
 
               return;
@@ -239,23 +249,46 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
                 {
                   send_broadcast(player._fd_id, response, listener, master, DEFAULT_BUFLEN);
                 }
-              
+             hunter_action(master,listener);
                 stage=STAGE_DAY;
                 return;
             }
         }
-      }
+    
         case STAGE_DAY:
           {
             if(strstr(buf,GAME_EVENT_DAY))
             {
               buf += strlen(GAME_EVENT_DAY);
               printf("Day actions.\n");
-    
+              vote_max(master,listener,fdmax,buf);
+
+
+            }else if(strstr(buf,GAME_EVENT_OVER)){
+
+            decision_won_lost(master,listener,fdmax);
+
+            }else if(strstr(buf,GAME_EVENT_ACTION_HUNTER)){
+                   buf += strlen(GAME_EVENT_ACTION_HUNTER);
+               for(auto &player:players){
+                     if(strstr(player._name,buf)){
+                        player._alive= false;
+                        printf("Player: %s has been killed.\n", player._name);
+                        write_formatted_log(GRAY "[SERVER LOG] Sending the action of the witch " RESET "\n");
+                       char response[DEFAULT_BUFLEN] = GAME_EVENT_DAY;
+                       send_message(i, response, listener, master, DEFAULT_BUFLEN);
+                     //obviamente falta mandar bien quien  murio al cliente
+                       
+                      }  
+                  }
+                  return;
+            }else{
+
+            }
             }
           }  
     }//switch
-}//clase
+//clase
 
 
 
@@ -372,25 +405,6 @@ void GameServer::check_mainhost(fd_set master, int listener, int i, char buf[], 
         }
 }
 
- void GameServer::player_list(fd_set master, int listener, int fdmax)   
- {
-    for(auto &player:players)
-      {
-
-        if(player._alive==true)
-        {
-           printf("Player: %s you're alive", player.getName());           
-           char response[DEFAULT_BUFLEN] = GAME_EVENT_ALIVE_PLAYERS;
-           send_broadcast(fdmax, response, listener, master, DEFAULT_BUFLEN);
-           write_formatted_log(GRAY "[SERVER LOG] Sending the list of players " RESET "\n");
-        }
-        else
-         {
-            write_formatted_log(GRAY "[SERVER LOG] The player is no longer alive " RESET "\n");
-         }
-
-      }
-}
 
 void GameServer::get_active_players(char* active_players)
 {
@@ -458,43 +472,42 @@ void GameServer::get_active_players(char* active_players)
           else if (player._role == 4)//seer
           {
             Good_guy++;
+          }else{
+            return;
           }
                   
         }
       }
       if(Bad_guy>=Good_guy)
       {
-        char response[DEFAULT_BUFLEN];
-        write_formatted_log(GRAY "[SERVER LOG] Sending the current players " RESET "\n");
-        //snprintf(response, DEFAULT_BUFLEN, "%s%u",GAME_EVENT_OVER, Current_Players); 
+        char response[DEFAULT_BUFLEN]=GAME_EVENT_OVER;
+        write_formatted_log(GRAY "[SERVER LOG] The game is finish, the wolf won " RESET "\n"); 
         send_broadcast(fdmax, response, listener, master, DEFAULT_BUFLEN);
         //send the game is over the werewolf win
+        //revisar el brocast 
       }
       else
       {
-        //the game continue
+        char response[DEFAULT_BUFLEN]=GAME_EVENT_NIGHT;
+        write_formatted_log(GRAY "[SERVER LOG] the game continue " RESET "\n"); 
+        send_broadcast(fdmax, response, listener, master, DEFAULT_BUFLEN);
       }
  }
 
- void GameServer::player_list_dead(fd_set master, int listener, int fdmax, char buf[], int nbytes)   
+ void GameServer::player_list_dead(char* dead_players)   
  {
-    for(auto &player:players)
+     for (auto &player:players)
+  {
+    if (player.isAlive()==false)
+    {
+      strcat(dead_players,player.getName());
+      if (player.getFdId() != players[players.size()-1].getFdId())
       {
-
-        if(player._alive==false)
-        {
-           char response[DEFAULT_BUFLEN];
-           snprintf(response, DEFAULT_BUFLEN, "%s", player._name);
-           send_broadcast(fdmax, response, listener, master, DEFAULT_BUFLEN);
-           write_formatted_log(GRAY "[SERVER LOG] Sending the list of players " RESET "\n");
-           printf("Player: %s you're still alive", player.getName());           
-        }
-        else
-         {
-            write_formatted_log(GRAY "[SERVER LOG] The player is no longer alive " RESET "\n");
-         }
-
+        strcat(dead_players, ",");
       }
+    }
+  }
+  strcat(dead_players, "\0");
 }
 
 void GameServer::witch_action(fd_set master, int listener) 
@@ -570,3 +583,77 @@ void GameServer::seer_action(fd_set master, int listener){
                   }
                 }
 }
+
+
+void GameServer::vote_max(fd_set master, int listener, int fdmax, char buf[]){
+int max = 0;
+int counter=0;
+ int kill_player=0;
+int total_votes=players.size();        
+int vote=0;
+            
+            
+            for(auto &player:players)
+                {
+                  if(strstr(player._name,buf))//si es seer
+                  {
+                     player._vote ++;
+                    
+                  }
+                  vote++;
+                
+
+}
+           
+           if(total_votes==vote){
+             
+              for (auto &player:players)
+              {
+                if (max <= player._vote)
+                {
+                  max = player._vote;
+                  kill_player = counter;
+                }
+                counter++;
+              }
+              players[kill_player]._alive = false;
+               char response[DEFAULT_BUFLEN];
+              snprintf(response, DEFAULT_BUFLEN, "%s %s",GAME_EVENT_DECISION,players[kill_player]._name);
+
+              printf("Player: %s has died\n", players[kill_player]._name);
+              write_formatted_log(GRAY "[SERVER LOG] One player has died." RESET "\n");
+              send_broadcast(fdmax, response, listener, master, DEFAULT_BUFLEN);
+                         
+            }
+                
+}       
+
+void GameServer::hunter_action(fd_set master, int listener) 
+{
+
+  //no envia a brujas el evento
+  for (auto &player:players)
+  {
+    if (player._role == 3)//si es bruja
+    {
+      char active_players[DEFAULT_BUFLEN] = "";
+      get_active_players(active_players);
+
+      char response[DEFAULT_BUFLEN] = GAME_EVENT_ACTION_HUNTER;
+      strcat(response, active_players);
+      write_formatted_log(GRAY "[SERVER LOG] Witch action" RESET "\n");
+      send_message(player._fd_id, response, listener, master, DEFAULT_BUFLEN);
+    }
+    else 
+    {
+      char response[DEFAULT_BUFLEN] = GAME_EVENT_ACTION_WAITING;
+      write_formatted_log(GRAY "[SERVER LOG] Waiting for action" RESET "\n");
+      send_message(player._fd_id, response, listener, master, DEFAULT_BUFLEN);
+    }
+  }
+}
+
+//no funciona el check_main host, 2 no he hecho pruebas pero "por logica" mia obviamnte... puede que este
+//erroneamente mal deberia funcionar, 3 cualquier cosa me dices, no tiene errores, am creo que no mas seria imprimir a quien mator el hunter, y
+//otras como el conteo de dia y lo que decias del acomodo y metida para los errores y eso..
+//me avisas cualquier pedo: buenas noches/ buenos dias

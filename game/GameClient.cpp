@@ -244,58 +244,47 @@ return;
         {
          if(strstr(buf,GAME_EVENT_DAY))
          {
-                printf("Day actions.\n");
-                return;
+            
+
+              // Unwrap list of active players
+             print_dead_players(buf);
+              buf += strlen(GAME_EVENT_DAY);//maybe esto este mal
+              
+
+              printf("kill who you suspect to be the wolf: ");
+              char response[DEFAULT_BUFLEN];
+              char person_wolf[DEFAULT_BUFLEN];
+              strcpy(response, GAME_EVENT_DAY);
+              std::cin.getline(person_wolf, DEFAULT_BUFLEN);
+              strcat(response, person_wolf);
+              send_message(s, response, DEFAULT_BUFLEN);
          }
-         if(strstr(buf,GAME_EVENT_NEW))
+         else if(strstr(buf,GAME_EVENT_DECISION))
          {
-           // EXTRAER MUERTOS DESDE EL MENSAJE
-           // MOSTRAR MUERTOS
-           // SI ESTOY EN MUERTOS Y NO SOY CAZADOR
-         //{
-             stage = STAGE_VIEWER;
-         //}
+         //la verdad no se me ocurre como imprimirlo XD asi que solo pondre un printf buf
+           printf("ha muerto %s",buf);
+           //podria tener otra logica no? pero eso ando ya mal JAJJA
+           char response[DEFAULT_BUFLEN]=GAME_EVENT_OVER;
+           send_message(s, response, DEFAULT_BUFLEN);
+
          }
-         if(strstr(buf,GAME_EVENT_NEW))
+         else if(strstr(buf,GAME_EVENT_ACTION_HUNTER))
          {
-            //ESPERAR ENTRADA DE USUARIO (JUGADOR)
-            //ENVIAR A SERVIDOR "VICTIMA CAZADOR 1" + JUGADOR 
-            stage=STAGE_VIEWER;
-            return;
-         }
-         if(strstr(buf,GAME_EVENT_NEW))
-         {
-           //ESPERAR ENTRADA DE USUARIO (JUGADOR)
-           //ENVIAR A SERVIDOR "VICTIMA CAZADOR 2" + JUGADOR
-           stage = STAGE_VIEWER;
-            return;
-         }
-         if(strstr(buf,GAME_EVENT_VICTIM_HUNTER))
-         {
-              //EXTRAER VICTIMA DESDE MENSAJE
-              //MOSTRAR VICTIMA
-              //SI SOY VICTIMA
-               stage = STAGE_VIEWER;
-            return;
-         }
-         if(strstr(buf,GAME_EVENT_ACTION_EVERYONE))
-         {
-            //ESPERAR ENTRADA DE USUARIO (VOTO)
-            //ENVIAR A SERVIDOR "VOTO JUGADOR" + VOTO
-            return;
-         }
+             printf("who do u want to kill: ");
+              char response[DEFAULT_BUFLEN];
+              char person_kill[DEFAULT_BUFLEN];
+              strcpy(response, GAME_EVENT_DAY);
+              std::cin.getline(person_kill, DEFAULT_BUFLEN);
+              strcat(response, person_kill);
+              send_message(s, response, DEFAULT_BUFLEN);
          
-         if(strstr(buf,GAME_EVENT_NIGHT))
-         {
-            stage = STAGE_NIGHT;
             return;
          }
-         if(strstr(buf,GAME_EVENT_OVER))
+         else if(strstr(buf,GAME_EVENT_OVER))
          {
-            //EXTRAER GANADOR DESDE EL MENSAJE
-            //MOSTRAR GANADOR
-            stage = STAGE_OVER;
-            return; //fin del juego
+            
+            printf("Se ha acabdo la partida los lobos han ganado");
+           //supongo que un break;
          }
          else
          {
@@ -310,6 +299,19 @@ return;
 void GameClient::print_active_players(char* players)
 {
     printf("Active Players: \n");
+    while (*players != '\0')
+    {
+        if (*players != ',') printf("%c", *players);
+        else printf("\n");
+        players++;
+    }
+    printf("\n\n");
+}
+
+
+void GameClient::print_dead_players(char* players)
+{
+    printf("Dead Players: \n");
     while (*players != '\0')
     {
         if (*players != ',') printf("%c", *players);
