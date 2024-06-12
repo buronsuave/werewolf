@@ -15,8 +15,8 @@
 
 // Default constants for testing
 #define PORT "9034"
-#define SERVER_IP "127.0.0.1"
-#define MAX_CLIENTS 10
+#define SERVER_IP "26.150.165.214"
+#define MAX_CLIENTS 100
 #define DEFAULT_BUFLEN 512
 
 // Color of debug logs in console
