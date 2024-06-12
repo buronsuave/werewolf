@@ -12,6 +12,7 @@ class GameClient : public Client
     ROLE role;
     void handle_recv(char buf[], SOCKET s);
     void print_active_players(char* players);
+    void print_dead_players(char* players);
 };
 
 #endif

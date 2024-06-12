@@ -40,7 +40,10 @@ enum ROLE
 #define GAME_EVENT_ACTION_WEREWOLF "werewolf"
 #define GAME_EVENT_ACTION_WITCH "witch"
 #define GAME_EVENT_ACTION_SEER "seer"
-#define GAME_EVENT_VICTIM_HUNTER "cazador"
+#define GAME_EVENT_ACTION_HUNTER "hunter"
+#define GAME_EVENT_VICTIM_HUNTER "victim"
+#define GAME_EVENT_ACTION_SAVEH "nothing"
+#define GAME_EVENT_ACTION_KILLH "killwolf"
 #define GAME_EVENT_ACTION_SAVE "save"
 #define GAME_EVENT_ACTION_KILL "kill"
 #define GAME_EVENT_ALIVE_PLAYERS "alive"
@@ -52,6 +55,8 @@ enum ROLE
 #define GAME_EVENT_SEER_CHECK_WOLF "check_wolf"
 #define GAME_EVENT_SEER_CHECK_NOWOLF "check_nowolf"
 #define GAME_EVENT_ACTION_EVERYONE "everyone"
+#define GAME_EVENT_DECISION "decision"
+
 #define GAME_MAX_PLAYERS 20
 #define GAME_MIN_PLAYERS 8
 
