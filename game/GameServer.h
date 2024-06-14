@@ -27,6 +27,8 @@ class GameServer : public Server
     void get_active_players(char* active_players);
     void hunter_action(fd_set master, int listener);
     void vote_max(fd_set master, int listener, int fdmax, char buf[]);
+    void change_to_day(fd_set master, int listener);
+
 }; 
 
 #endif

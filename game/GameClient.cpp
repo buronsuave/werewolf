@@ -124,42 +124,6 @@ void GameClient::handle_recv(char buf[], SOCKET s)
               send_message(s, response, DEFAULT_BUFLEN);
               return; 
           }
-          else if (strstr(buf, GAME_EVENT_ACTION_SEER))
-          {
-              printf("You are the seer.\n");
-              printf("You must choose someone and ask if they is a werewolf.\n\n");
-
-              // Unwrap list of active players
-              buf += strlen(GAME_EVENT_ACTION_SEER);
-              print_active_players(buf);
-
-              printf("Write the name of the person do you want to know: ");
-              char response[DEFAULT_BUFLEN];
-              char person_know[DEFAULT_BUFLEN];
-              strcpy(response, GAME_EVENT_ACTION_SEER);
-              std::cin.getline(person_know, DEFAULT_BUFLEN);
-              strcat(response, person_know);
-              send_message(s, response, DEFAULT_BUFLEN);
-            return;
-          }
-          else if (strstr(buf, GAME_EVENT_SEER_CHECK_WOLF))
-          {
-              printf("The player you asked for is a werewolf.\n");
-              char response[DEFAULT_BUFLEN];
-              strcpy(response, GAME_EVENT_DAY);
-              send_message(s, response, DEFAULT_BUFLEN);
-              this->stage = STAGE_DAY; 
-              return;
-          }
-          else if (strstr(buf, GAME_EVENT_SEER_CHECK_NOWOLF))
-          {
-              printf("The player you asked for is NOT a werewolf.\n");
-              char response[DEFAULT_BUFLEN];
-              strcpy(response, GAME_EVENT_DAY);
-              send_message(s, response, DEFAULT_BUFLEN);
-              this->stage = STAGE_DAY;
-              return;
-          }
           else if (strstr(buf, GAME_EVENT_ACTION_WITCH))
           {
               printf("You are the witch.\n");
@@ -214,66 +178,80 @@ return;
 return;
 
           }
+          else if (strstr(buf, GAME_EVENT_ACTION_SEER))
+          {
+              printf("You are the seer.\n");
+              printf("You must choose someone and ask if they is a werewolf.\n\n");
 
+              // Unwrap list of active players
+              buf += strlen(GAME_EVENT_ACTION_SEER);
+              print_active_players(buf);
+
+              printf("Write the name of the person do you want to know: ");
+              char response[DEFAULT_BUFLEN];
+              char person_know[DEFAULT_BUFLEN];
+              strcpy(response, GAME_EVENT_ACTION_SEER);
+              std::cin.getline(person_know, DEFAULT_BUFLEN);
+              strcat(response, person_know);
+              send_message(s, response, DEFAULT_BUFLEN);
+            return;
+          }
+          else if (strstr(buf, GAME_EVENT_SEER_CHECK_WOLF))
+          {
+              printf("The player you asked for is a werewolf.\n");
+              char response[DEFAULT_BUFLEN];
+              strcpy(response, GAME_EVENT_DAY);
+              send_message(s, response, DEFAULT_BUFLEN); 
+              this -> stage = STAGE_DAY;
+              return;
+             
+          }
+          else if (strstr(buf, GAME_EVENT_SEER_CHECK_NOWOLF))
+          {
+              printf("The player you asked for is NOT a werewolf.\n");
+              char response[DEFAULT_BUFLEN];
+              strcpy(response, GAME_EVENT_DAY);
+              send_message(s, response, DEFAULT_BUFLEN);
+              this -> stage = STAGE_DAY;
+              return;
+          }
           else if (strstr(buf, GAME_EVENT_ACTION_WAITING))
           {
             printf("Wait until all the other players are done with their actions.\n");
             return;
           }
-          else if(strstr(buf,GAME_EVENT_DAY))
-          {
-             char response[DEFAULT_BUFLEN];
-                   strcpy(response, GAME_EVENT_ACTION_WITCH);
-                   strcat(response, GAME_EVENT_ACTION_KILL);
-                   send_message(s, response, DEFAULT_BUFLEN);
-            stage = STAGE_DAY;
-            return;
-          }
-          // si no error 
-          if (strstr(buf, GAME_EVENT_ALIVE_PLAYERS))
-          {
-            printf("You're still alive.\n");
-          }
           else {
             printf("Fatal Error from STAGE NIGHT.\n");
+            write_formatted_log(GRAY "[CLIENT LOG] FATAL ERROR FROM STAGE NIGHT\n" RESET);
+            
           }
           break;
 
     }
         case STAGE_DAY:
         {
-         if(strstr(buf,GAME_EVENT_DAY))
+        /* if(strstr(buf,GAME_EVENT_DAY))
          {
-            
+                printf("kill who you suspect to be the wolf: ");
+                char response[DEFAULT_BUFLEN];
+                char person_wolf[DEFAULT_BUFLEN];
+                std::cin.getline(person_wolf, DEFAULT_BUFLEN);
 
-              // Unwrap list of active players
-             print_dead_players(buf);
-              buf += strlen(GAME_EVENT_DAY);//maybe esto este mal
-              
+  
+                strcpy(response, GAME_EVENT_DAY);
+                strcat(response, person_wolf);
+                send_message(s, response, DEFAULT_BUFLEN);
 
-              printf("kill who you suspect to be the wolf: ");
-              char response[DEFAULT_BUFLEN];
-              char person_wolf[DEFAULT_BUFLEN];
-              strcpy(response, GAME_EVENT_DAY);
-              std::cin.getline(person_wolf, DEFAULT_BUFLEN);
-              strcat(response, person_wolf);
-              send_message(s, response, DEFAULT_BUFLEN);
-         }
-         else if(strstr(buf,GAME_EVENT_DECISION))
+         }else if(strstr(buf,GAME_EVENT_ACTION_HUNTER))
          {
-         //la verdad no se me ocurre como imprimirlo XD asi que solo pondre un printf buf
-           printf("ha muerto %s",buf);
-           //podria tener otra logica no? pero eso ando ya mal JAJJA
-           char response[DEFAULT_BUFLEN]=GAME_EVENT_OVER;
-           send_message(s, response, DEFAULT_BUFLEN);
+           
+             buf += strlen(GAME_EVENT_ACTION_HUNTER);
+              print_active_players(buf);
 
-         }
-         else if(strstr(buf,GAME_EVENT_ACTION_HUNTER))
-         {
              printf("who do u want to kill: ");
               char response[DEFAULT_BUFLEN];
               char person_kill[DEFAULT_BUFLEN];
-              strcpy(response, GAME_EVENT_DAY);
+              strcpy(response, GAME_EVENT_ACTION_HUNTER);
               std::cin.getline(person_kill, DEFAULT_BUFLEN);
               strcat(response, person_kill);
               send_message(s, response, DEFAULT_BUFLEN);
@@ -289,12 +267,19 @@ return;
          else
          {
             printf("Fatal Error from STAGE DAY.\n");
-        } 
+        } */
+
+          if(strstr(buf,GAME_EVENT_ACTION_HUNTER)){
+            printf("action hunter");
+          }
+
+
     }
 
     }
 
 }
+
 
 void GameClient::print_active_players(char* players)
 {

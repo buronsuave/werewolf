@@ -119,8 +119,8 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
 
           if(strstr(buf, GAME_EVENT_ACTION_WEREWOLF))
           {
-            // We might replace this calculation because we need to check the CURRENT number of werewolves (iterate over all the alive players)
-            int total_wolfs = (((players.size() - 3) / 5) * 2); //calculate the wolf
+            
+            int total_wolfs = (((players.size() - 3) / 5) * 2); 
             int votes_wolfs = 0;
             int counter = 0;
             int kill_player=0;
@@ -145,13 +145,13 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
                   kill_player = counter;
                 }
                 counter++;
+                player._vote = 0;
               }
               players[kill_player]._alive = false;
                char response[DEFAULT_BUFLEN];
               snprintf(response, DEFAULT_BUFLEN, "You have been killed: %s\n", players[kill_player]._name);
               printf("Player: %s has died\n", players[kill_player]._name);
               write_formatted_log(GRAY "[SERVER LOG] One player has died." RESET "\n");
-             //revisar dudillas
             }
 
             if(votes_wolfs==total_wolfs){
@@ -242,14 +242,17 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
                     }
                   }
                  }
+                //change_to_day(master, listener);
 
-                char response[DEFAULT_BUFLEN] = GAME_EVENT_DAY;
-                write_formatted_log(GRAY "[SERVER LOG] Changing STAGE to DAY " RESET "\n");
-                for (auto &player:players)
-                {
-                  send_broadcast(player._fd_id, response, listener, master, DEFAULT_BUFLEN);
-                }
-             hunter_action(master,listener);
+
+
+                
+                      write_formatted_log(GRAY "[SERVER LOG] Changing to day and sending the action of hunter " RESET "\n");
+                      printf("\n changing to day and sending the action to the hunter");
+                      char response[DEFAULT_BUFLEN] = GAME_EVENT_ACTION_HUNTER;
+                      send_message(fdmax, response, listener, master, nbytes);
+
+
                 stage=STAGE_DAY;
                 return;
             }
@@ -257,17 +260,21 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
     
         case STAGE_DAY:
           {
-            if(strstr(buf,GAME_EVENT_DAY))
+           /*  if(strstr(buf,GAME_EVENT_DAY))
             {
               buf += strlen(GAME_EVENT_DAY);
               printf("Day actions.\n");
+              hunter_action(master,listener);
               vote_max(master,listener,fdmax,buf);
-
-
+             
+             return; 
             }else if(strstr(buf,GAME_EVENT_OVER)){
 
             decision_won_lost(master,listener,fdmax);
-
+            char response[DEFAULT_BUFLEN]=GAME_EVENT_ACTION_WEREWOLF;
+              send_message(fdmax, response, listener, master, DEFAULT_BUFLEN);
+              stage= STAGE_NIGHT;
+           return;
             }else if(strstr(buf,GAME_EVENT_ACTION_HUNTER)){
                    buf += strlen(GAME_EVENT_ACTION_HUNTER);
                for(auto &player:players){
@@ -284,7 +291,12 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
                   return;
             }else{
 
-            }
+            }*/
+
+
+
+
+
             }
           }  
     }//switch
@@ -405,7 +417,6 @@ void GameServer::check_mainhost(fd_set master, int listener, int i, char buf[], 
         }
 }
 
-
 void GameServer::get_active_players(char* active_players)
 {
   for (auto &player:players)
@@ -498,7 +509,7 @@ void GameServer::get_active_players(char* active_players)
  {
      for (auto &player:players)
   {
-    if (player.isAlive()==false)
+    if (player._alive==false)
     {
       strcat(dead_players,player.getName());
       if (player.getFdId() != players[players.size()-1].getFdId())
@@ -509,21 +520,20 @@ void GameServer::get_active_players(char* active_players)
   }
   strcat(dead_players, "\0");
 }
-
+//revision de lista dead
 void GameServer::witch_action(fd_set master, int listener) 
 {
 
-  //no envia a brujas el evento
   for (auto &player:players)
   {
-    if (player._role == 2)//si es bruja
+    if (player._role == 2)
     {
       char active_players[DEFAULT_BUFLEN] = "";
       get_active_players(active_players);
 
       char response[DEFAULT_BUFLEN] = GAME_EVENT_ACTION_WITCH;
       strcat(response, active_players);
-      write_formatted_log(GRAY "[SERVER LOG] Witch action" RESET "\n");
+      write_formatted_log(GRAY "[SERVER LOG] Witch action" RESET "\n"); 
       send_message(player._fd_id, response, listener, master, DEFAULT_BUFLEN);
     }
     else 
@@ -538,11 +548,11 @@ void GameServer::witch_action(fd_set master, int listener)
 
 
 void GameServer::werewolf_action(fd_set master, int listener){
-     for(auto &player:players)
+  for(auto &player:players)
                 {
-                  if(player._role==1)//si es werewolf
+                  if(player._role==1)
                   {
-                    // Append here in response the list of all the active players
+                    
                     char active_players[DEFAULT_BUFLEN] = "";
                     get_active_players(active_players);
 
@@ -565,7 +575,7 @@ void GameServer::seer_action(fd_set master, int listener){
 
  for(auto &player:players)
                 {
-                  if(player._role==3)//si es seer
+                  if(player._role==3)
                   {
                     char active_players[DEFAULT_BUFLEN] = "";
                     get_active_players(active_players);
@@ -588,25 +598,22 @@ void GameServer::seer_action(fd_set master, int listener){
 void GameServer::vote_max(fd_set master, int listener, int fdmax, char buf[]){
 int max = 0;
 int counter=0;
- int kill_player=0;
-int total_votes=players.size();        
+int kill_player=0;
 int vote=0;
             
             
             for(auto &player:players)
                 {
-                  if(strstr(player._name,buf))//si es seer
+                  if(strstr(player._name,buf))
                   {
                      player._vote ++;
-                    
+                     vote ++;
+                     printf("vote: %i\n", vote);
                   }
-                  vote++;
-                
-
-}
+                 
+                }
            
-           if(total_votes==vote){
-             
+           if(players.size()==vote){
               for (auto &player:players)
               {
                 if (max <= player._vote)
@@ -615,6 +622,7 @@ int vote=0;
                   kill_player = counter;
                 }
                 counter++;
+                player._vote = 0;
               }
               players[kill_player]._alive = false;
                char response[DEFAULT_BUFLEN];
@@ -631,29 +639,35 @@ int vote=0;
 void GameServer::hunter_action(fd_set master, int listener) 
 {
 
-  //no envia a brujas el evento
+
   for (auto &player:players)
   {
-    if (player._role == 3)//si es bruja
+    if (player._role == 3 && player._alive == false)
     {
       char active_players[DEFAULT_BUFLEN] = "";
       get_active_players(active_players);
 
       char response[DEFAULT_BUFLEN] = GAME_EVENT_ACTION_HUNTER;
       strcat(response, active_players);
-      write_formatted_log(GRAY "[SERVER LOG] Witch action" RESET "\n");
+      write_formatted_log(GRAY "[SERVER LOG] Hunter action" RESET "\n");
       send_message(player._fd_id, response, listener, master, DEFAULT_BUFLEN);
     }
     else 
     {
-      char response[DEFAULT_BUFLEN] = GAME_EVENT_ACTION_WAITING;
+      char response[DEFAULT_BUFLEN] = GAME_EVENT_ACTION_HUNTER;
       write_formatted_log(GRAY "[SERVER LOG] Waiting for action" RESET "\n");
       send_message(player._fd_id, response, listener, master, DEFAULT_BUFLEN);
     }
   }
 }
 
-//no funciona el check_main host, 2 no he hecho pruebas pero "por logica" mia obviamnte... puede que este
-//erroneamente mal deberia funcionar, 3 cualquier cosa me dices, no tiene errores, am creo que no mas seria imprimir a quien mator el hunter, y
-//otras como el conteo de dia y lo que decias del acomodo y metida para los errores y eso..
-//me avisas cualquier pedo: buenas noches/ buenos dias
+void GameServer::change_to_day(fd_set master, int listener)
+{
+  for (auto &player : players)
+  {
+      char response[DEFAULT_BUFLEN] = GAME_EVENT_CHANGE_DAY;
+      write_formatted_log(GRAY "[SERVER LOG] Changing to day action" RESET "\n");
+      send_message(player._fd_id, response, listener, master, DEFAULT_BUFLEN);
+  }
+}
+

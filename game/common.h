@@ -56,6 +56,7 @@ enum ROLE
 #define GAME_EVENT_SEER_CHECK_NOWOLF "check_nowolf"
 #define GAME_EVENT_ACTION_EVERYONE "everyone"
 #define GAME_EVENT_DECISION "decision"
+#define GAME_EVENT_CHANGE_DAY "changeday "
 
 #define GAME_MAX_PLAYERS 20
 #define GAME_MIN_PLAYERS 8
