@@ -135,8 +135,10 @@ void GameClient::handle_recv(char buf[], SOCKET s)
 
               printf("Write the action do you want to do: ");
               char save_kill[DEFAULT_BUFLEN]; 
-             std::cin.getline(save_kill, DEFAULT_BUFLEN);
-                if (strstr(save_kill,GAME_EVENT_ACTION_SAVE)){
+            
+            do{
+               std::cin.getline(save_kill, DEFAULT_BUFLEN);         
+              if (strstr(save_kill,GAME_EVENT_ACTION_SAVE)){
                   char response[DEFAULT_BUFLEN];
                    strcpy(response, GAME_EVENT_ACTION_WITCH);
                    strcat(response, GAME_EVENT_ACTION_SAVE);
@@ -146,11 +148,13 @@ void GameClient::handle_recv(char buf[], SOCKET s)
                    strcpy(response, GAME_EVENT_ACTION_WITCH);
                    strcat(response, GAME_EVENT_ACTION_KILL);
                    send_message(s, response, DEFAULT_BUFLEN);
-                  
-                }else{
- 
-                    // Something else... (error while selecting option)
                 }
+                else
+                {
+                 printf("Error al recibir decision, vuelve a ingresarlo:");
+               }
+            }while(strcmp(save_kill,"save") !=0||strcmp(save_kill,"kill") != 0);
+
             return;
           }else if(strstr(buf, GAME_EVENT_ACTION_SAVE)){
 
@@ -240,7 +244,8 @@ return;
          { 
 
              buf += strlen(GAME_EVENT_DAY);
-
+              print_active_players(buf);
+              
                 printf("kill who you suspect to be the wolf: ");
                 char response[DEFAULT_BUFLEN];
                 char person_wolf[DEFAULT_BUFLEN];
@@ -274,13 +279,19 @@ return;
          else if(strstr(buf,GAME_EVENT_OVER))
          {
             
-            printf("Se ha acabdo la partida los lobos han ganado");
+          printf("Se ha acabdo la partida los lobos han ganado");
+
            return;
          }
           else if(strstr(buf,GAME_EVENT_DECISION))
          {
-            
+            buf += strlen(GAME_EVENT_DECISION);
             printf("HA MUERTO : %s",buf);
+           char response[DEFAULT_BUFLEN];
+            strcpy(response, GAME_EVENT_OVER);
+              send_message(s, response, DEFAULT_BUFLEN);
+         
+
             //stage night
            return;
          }

@@ -299,29 +299,6 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
                   }
                   return;
             }
-            else if (strstr(buf, GAME_EVENT_DECISION))
-            {
-              //imprimir la persona que murio , llamar a la funcion werewolf action y luego cambiar a stage night y el return
-               //imprimir la persona que murio , llamar a la funcion werewolf action y luego cambiar a stage night y el return
-            //imprimir la persona que murio , llamar a la funcion werewolf action y luego cambiar a stage night y el return
-              //imprimir la persona que murio , llamar a la funcion werewolf action y luego cambiar a stage night y el return
-              //imprimir la persona que murio , llamar a la funcion werewolf action y luego cambiar a stage night y el return
-              //imprimir la persona que murio , llamar a la funcion werewolf action y luego cambiar a stage night y el return
-              //imprimir la persona que murio , llamar a la funcion werewolf action y luego cambiar a stage night y el return
-              //imprimir la persona que murio , llamar a la funcion werewolf action y luego cambiar a stage night y el return
-
-
-
-
-
-
-
-
-
-
-
-              
-            }
             else{
 
             }
@@ -540,19 +517,20 @@ void GameServer::get_active_players(char* active_players)
 
  void GameServer::player_list_dead(char* dead_players)   
  {
-     for (auto &player:players)
-  {
-    if (player._alive==false)
-    {
-      strcat(dead_players,player.getName());
-      if (player.getFdId() != players[players.size()-1].getFdId())
-      {
-        strcat(dead_players, ",");
-      }
+     bool first_dead_player = true;
+
+    for (auto &player : players) {
+        if (!player._alive) {
+            if (!first_dead_player) {
+                strcat(dead_players, ",");
+            }
+            strcat(dead_players, player.getName());
+            first_dead_player = false;
+        }
     }
   }
-  strcat(dead_players, "\0");
-}
+  
+  
 //revision de lista dead
 void GameServer::witch_action(fd_set master, int listener) 
 {
