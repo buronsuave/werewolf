@@ -149,7 +149,9 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
               }
               players[kill_player]._alive = false;
                char response[DEFAULT_BUFLEN];
-              snprintf(response, DEFAULT_BUFLEN, "You have been killed: %s\n", players[kill_player]._name);
+               //strcpy(response, );
+               //strcat(response, players[kill_player]._name);
+            
               printf("Player: %s has died\n", players[kill_player]._name);
               write_formatted_log(GRAY "[SERVER LOG] One player has died." RESET "\n");
             }
@@ -637,6 +639,7 @@ int vote=0;
               players[kill_player]._alive = false;
                char response[DEFAULT_BUFLEN] = GAME_EVENT_DECISION; //los mandamos a decision
               strcat(response, players[kill_player]._name);
+              
               printf("Player: %s has been kicked\n", players[kill_player]._name);
               write_formatted_log(GRAY "[SERVER LOG] One player has died." RESET "\n");
               send_broadcast(fdmax, response, listener, master, DEFAULT_BUFLEN);
