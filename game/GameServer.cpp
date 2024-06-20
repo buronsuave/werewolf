@@ -264,20 +264,38 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
           {
              if(strstr(buf,GAME_EVENT_DAY))
             {
+
+              char active_players[DEFAULT_BUFLEN] = "";
+              get_active_players(active_players);
+
               buf += strlen(GAME_EVENT_DAY);
+
+         
+              
+             
+
               printf("Day actions.\n");
-
-
-
               vote_max(master,listener,fdmax,buf);
              
              return; 
             }else if(strstr(buf,GAME_EVENT_OVER)){
+               buf += strlen(GAME_EVENT_OVER);
 
-            decision_won_lost(master,listener,fdmax);
-            char response[DEFAULT_BUFLEN]=GAME_EVENT_ACTION_WEREWOLF;
-              send_message(fdmax, response, listener, master, DEFAULT_BUFLEN);
-              stage= STAGE_NIGHT;
+            //decision_won_lost(master,listener,fdmax);
+               for(auto &player:players){
+               if(player._alive==true){
+                werewolf_action(master,listener);
+               }else{
+                char response[DEFAULT_BUFLEN] = GAME_EVENT_ACTION_WAITING;
+               write_formatted_log(GRAY "[SERVER LOG] Waiting for action" RESET "\n");
+                send_message(player._fd_id, response, listener, master, DEFAULT_BUFLEN);
+               }
+               
+               
+               
+               
+               }
+             stage = STAGE_NIGHT;
            return;
             }
             else if(strstr(buf,GAME_EVENT_ACTION_HUNTER))
@@ -299,6 +317,7 @@ void GameServer::handle_recv(fd_set master, int fdmax, int listener, int i, char
                         send_message(player._fd_id, response, listener, master, DEFAULT_BUFLEN);
                       }
                   }
+
                   return;
             }
             else{
@@ -508,16 +527,21 @@ void GameServer::get_active_players(char* active_players)
         send_broadcast(fdmax, response, listener, master, DEFAULT_BUFLEN);
         //send the game is over the werewolf win
         //revisar el brocast 
+        return;
+
       }
       else
       {
         char response[DEFAULT_BUFLEN]=GAME_EVENT_NIGHT;
         write_formatted_log(GRAY "[SERVER LOG] the game continue " RESET "\n"); 
+        werewolf_action(master,listener);
         send_broadcast(fdmax, response, listener, master, DEFAULT_BUFLEN);
+        stage=STAGE_NIGHT;
+        return;
       }
  }
 
- void GameServer::player_list_dead(char* dead_players)   
+/* void GameServer::player_list_dead(char* dead_players)   
  {
      bool first_dead_player = true;
 
@@ -531,7 +555,7 @@ void GameServer::get_active_players(char* active_players)
         }
     }
   }
-  
+  */
   
 //revision de lista dead
 void GameServer::witch_action(fd_set master, int listener) 

@@ -88,11 +88,11 @@ void GameClient::handle_recv(char buf[], SOCKET s)
 
                 write_formatted_log(GRAY "[CLIENT LOG] Changing state to NIGHT\n" RESET);   
                 this->stage = STAGE_NIGHT;
-                
+                return;
              }
              else {//POR ESO SE IMPRIME FATAL
                 printf("Fatal Error from STAGE ROLE\n");
-                
+                return;
              }
              break;
 
@@ -136,7 +136,7 @@ void GameClient::handle_recv(char buf[], SOCKET s)
               printf("Write the action do you want to do: ");
               char save_kill[DEFAULT_BUFLEN]; 
             
-            do{
+           
                std::cin.getline(save_kill, DEFAULT_BUFLEN);         
               if (strstr(save_kill,GAME_EVENT_ACTION_SAVE)){
                   char response[DEFAULT_BUFLEN];
@@ -153,7 +153,7 @@ void GameClient::handle_recv(char buf[], SOCKET s)
                 {
                  printf("Error al recibir decision, vuelve a ingresarlo:");
                }
-            }while(strcmp(save_kill,"save") !=0||strcmp(save_kill,"kill") != 0);
+           
 
             return;
           }else if(strstr(buf, GAME_EVENT_ACTION_SAVE)){
@@ -287,12 +287,12 @@ return;
          {
             buf += strlen(GAME_EVENT_DECISION);
             printf("HA MUERTO : %s",buf);
-           char response[DEFAULT_BUFLEN];
-            strcpy(response, GAME_EVENT_OVER);
+             char response[DEFAULT_BUFLEN];
+             strcpy(response, GAME_EVENT_OVER);
               send_message(s, response, DEFAULT_BUFLEN);
          
 
-            //stage night
+            this->stage = STAGE_NIGHT;
            return;
          }
          else
