@@ -143,15 +143,18 @@ void GameClient::handle_recv(char buf[], SOCKET s)
                    strcpy(response, GAME_EVENT_ACTION_WITCH);
                    strcat(response, GAME_EVENT_ACTION_SAVE);
                    send_message(s, response, DEFAULT_BUFLEN);
+                    
                 }else if(strstr(save_kill,GAME_EVENT_ACTION_KILL)){
                         char response[DEFAULT_BUFLEN];
                    strcpy(response, GAME_EVENT_ACTION_WITCH);
                    strcat(response, GAME_EVENT_ACTION_KILL);
                    send_message(s, response, DEFAULT_BUFLEN);
+                   
                 }
                 else
                 {
                  printf("Error al recibir decision, vuelve a ingresarlo:");
+                  
                }
            
 
@@ -319,14 +322,3 @@ void GameClient::print_active_players(char* players)
 }
 
 
-void GameClient::print_dead_players(char* players)
-{
-    printf("Dead Players: \n");
-    while (*players != '\0')
-    {
-        if (*players != ',') printf("%c", *players);
-        else printf("\n");
-        players++;
-    }
-    printf("\n\n");
-}
