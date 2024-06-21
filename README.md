@@ -6,6 +6,10 @@ Please, read the ```Quick Start``` section to be able to contribute to this proj
 To review the complete documentation go to the following link
 https://drive.google.com/drive/folders/1U9WqZ5GmvYSgROKsc-7zoD3VeNtPHer2?usp=sharing
 
+## References
+WebSockets
+https://beej.us/guide/bgnet/pdf/bgnet_usl_c_1.pdf
+
 ## Quick Start
 ### 1. Clone this repository on your computer. 
 
