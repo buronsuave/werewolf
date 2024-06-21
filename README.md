@@ -2,6 +2,10 @@
 Welcome to our Werewolf project! We're glad to see you here.
 Please, read the ```Quick Start``` section to be able to contribute to this project (setup configuration mostly).
 
+## Documentation
+To review the complete documentation go to the following link
+https://drive.google.com/drive/folders/1U9WqZ5GmvYSgROKsc-7zoD3VeNtPHer2?usp=sharing
+
 ## Quick Start
 ### 1. Clone this repository on your computer. 
 
